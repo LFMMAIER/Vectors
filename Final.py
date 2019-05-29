@@ -13,9 +13,14 @@ class Vector(x,y,z):
 # Cross product function
 
 def cross(vec1,vec2):
-    return (vec1.y*vec2.z - vec1.z*vec2.y, vec1.z*vec2.x - vec1.x*vec2.z, vec1.x*vec2.y - vec1.y*vec2.x)
-    
+    return Vector(vec1.y*vec2.z - vec1.z*vec2.y, vec1.z*vec2.x - vec1.x*vec2.z, vec1.x*vec2.y - vec1.y*vec2.x)
 
+# Dot product
+
+def dot(vec1,vec2):
+    return vec1.x*vec2.x + vec1.y*vec2.y + vec1.z*vec2.z
+        
+    
 #2 Planes
 
 def twoPlanes(plane1,plane2):
@@ -31,4 +36,3 @@ def twoPlanes(plane1,plane2):
 #3 Planes
 
 def threePlanes(plane1,plane2,plane3):
-
