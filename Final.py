@@ -1,10 +1,18 @@
 import math
-import python
+import pygame
 
 class Vector:
 
     def __init__(self,x,y,z):
         self.vec = (x,y,z)
+        self.x = x
+        self.y = y
+        self.z = z
+
+class Point:
+
+    def __init__(self,x,y,z):
+        self.point = (x,y,z)
         self.x = x
         self.y = y
         self.z = z
@@ -34,21 +42,22 @@ def twoPlanes(plane1,plane2):
 
 #3 Planes
 
-def threePlanes(plane1,plane2,plane3):
+#def threePlanes(plane1,plane2,plane3):
 
 # Plane and a line
 
-def planeLine(line1,plane1):
-    if dot(line1.dirvec, plane1.normal) == 0:
-        if
+#def planeLine(line1,plane1):
+#    if dot(line1.dirvec, plane1.normal) == 0:
+#        if
 
 
 # If a point is on a plane
 def isPointPlane(point1,plane1):
-   if plane1.normal.x * point1.x + plane1.normal.y * point1.y + plane1.normal.z * point1.z == plane1.c: 
+    if plane1.normal.x * point1.x + plane1.normal.y * point1.y + plane1.normal.z * point1.z == plane1.c: 
         return True
     else:
         return False
+
     
 #Equation
 
@@ -125,3 +134,10 @@ class Plane():
 boi = Plane((2,4,5),(7,-8,1),(2,9,-5))
 
 print (boi.equation('Catisian'))
+
+
+point = Point(1,2,3)
+pi = Plane((3,2,1),(3,2,1),(1,1,1))
+
+print(pi.equation('Catisian'))
+print(isPointPlane(point,pi))
