@@ -1,11 +1,10 @@
 import math
 import python
 
-#Solver funtions
-
-class Vector(x,y,z):
+class Vector:
 
     def __init__(self,x,y,z):
+        self.vec = (x,y,z)
         self.x = x
         self.y = y
         self.z = z
@@ -31,8 +30,22 @@ def twoPlanes(plane1,plane2):
             return None
     else:
         #Need calculations here to determine the point and the direction vector
-        return line(dirVec, point)
+        return line(Vector(dirVec), point)
 
 #3 Planes
 
 def threePlanes(plane1,plane2,plane3):
+
+# Plane and a line
+
+def planeLine(line1,plane1):
+    if dot(line1.dirvec, plane1.normal) == 0:
+        if
+
+
+# If a point is on a plane
+def isPointPlane(point1,plane1):
+   if plane1.normal.x * point1.x + plane1.normal.y * point1.y + plane1.normal.z * point1.z == plane1.c: 
+        return True
+    else:
+        return False
