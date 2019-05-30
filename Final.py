@@ -1,13 +1,25 @@
 import math
 import pygame
 
-class Vector:
+class Vector():
 
     def __init__(self,x,y,z):
-        self.vec = (x,y,z)
         self.x = x
         self.y = y
         self.z = z
+        self.vec = Vector.reduce(self)
+
+    def reduce(self):
+        num = 2
+        top = max(abs(self.x),abs(self.y),abs(self.z))
+        while num != top:
+            if self.x%num == 0 and self.y%num == 0 and self.z%num == 0:
+                self.x = self.x//num
+                self.y = self.y//num
+                self.z = self.z//num
+                return (self.x,self.y,self.z)
+            num += 1
+        return (self.x,self.y,self.z)
 
 class Point:
 
