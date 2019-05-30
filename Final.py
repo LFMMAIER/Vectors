@@ -80,10 +80,11 @@ class Line():
     #space either '2d' or '3d'
     def __init__(self,point,dirVector,space):
 
-        self.point = point
         if space == '2d':
+            self.point = Point(point[0],point[1],0)
             self.dirVector = Vector(dirVector[0],dirVector[1],0)
         else:
+            self.point = Point(point[0],point[1],point[2])
             self.dirVector = Vector(dirVector[0],dirVector[1],dirVector[2])
         self.space = space
         self.normal = Line.norm(dirVector,space)
@@ -107,18 +108,18 @@ class Line():
     def equation(self,typee):
         if self.space == '2d':
             if typee == 'Vector':
-                return '(x,y) = '+str(self.point)+' + t'+str(self.dirVector)
+                return '(x,y) = '+str(self.point.point)+' + t'+str(self.dirVector)
             elif typee == 'Parametic':
-                return str(self.point[0])+' + '+str(self.dirVector.x)+'t',str(self.point[1])+' + '+str(self.dirVector.y)+'t'
+                return str(self.point.x)+' + '+str(self.dirVector.x)+'t',str(self.point.y)+' + '+str(self.dirVector.y)+'t'
             elif typee == 'Sclar':
                 #print (self.normal)
-                c = -1*(self.point[0]*self.normal.x + self.point[1]*self.normal.y)
-                return str(self.normal.x)+'x'+' + '+str(self.normal.y)+'y + '+str(c)
+                c = (self.point.x*self.normal.x + self.point.y*self.normal.y)
+                return str(self.normal.x)+'x'+' + '+str(self.normal.y)+'y = '+str(c)
         if self.space == '3d':
             if typee == 'Vector':
-                return '(x,y,y) = '+str(self.point)+' + t'+str(self.dirVector.vec)
+                return '(x,y,y) = '+str(self.point.point)+' + t'+str(self.dirVector.vec)
             elif typee == 'Parametic':
-                return str(self.point[0])+' + '+str(self.dirVector.x)+'t',str(self.point[1])+' + '+str(self.dirVector.y)+'t',str(self.point[2])+' + '+str(self.dirVector.z)+'t'
+                return str(self.point.x)+' + '+str(self.dirVector.x)+'t',str(self.point.y)+' + '+str(self.dirVector.y)+'t',str(self.point.z)+' + '+str(self.dirVector.z)+'t'
             elif typee == 'Sclar':
                 return 'does not Exist'
 
@@ -128,21 +129,21 @@ class Plane():
     #Two dirVector a given dirction from a point (x,y,z)
     def __init__(self,point,dirVector1,dirVector2):
 
-        self.point = point
+        self.point = Point(point[0],point[1],point[2])
         self.dirVector1 = Vector(dirVector1[0],dirVector1[1],dirVector1[2])
         self.dirVector2 = Vector(dirVector2[0],dirVector2[1],dirVector2[2])
         self.normal = cross(self.dirVector1,self.dirVector2)
-        self.c = -1*(point[0]*self.normal.x + point[1]*self.normal.y + point[2]*self.normal.z)
+        self.c = (point[0]*self.normal.x + point[1]*self.normal.y + point[2]*self.normal.z)
 
     def equation(self,typee):
         if typee == 'Vector':
-                return '(x,y) = '+str(self.point)+' + t'+str(self.dirVector1.vec)+' + s'+str(self.dirVector2.vec)
+                return '(x,y) = '+str(self.point.point)+' + t'+str(self.dirVector1.vec)+' + s'+str(self.dirVector2.vec)
         elif typee == 'Parametic':
-                return str(self.point[0])+' + '+str(self.dirVector1.x)+'t'+' + '+str(self.dirVector2.x)+'s',str(self.point[1])+' + '+str(self.dirVector1.y)+'t'+' + '+str(self.dirVector2.y)+'s',str(self.point[2])+' + '+str(self.dirVector1.z)+'t'+' + '+str(self.dirVector2.z)+'s'
+                return str(self.point.x)+' + '+str(self.dirVector1.x)+'t'+' + '+str(self.dirVector2.x)+'s',str(self.point.y)+' + '+str(self.dirVector1.y)+'t'+' + '+str(self.dirVector2.y)+'s',str(self.point.z)+' + '+str(self.dirVector1.z)+'t'+' + '+str(self.dirVector2.z)+'s'
         elif typee == 'Catisian':
                 #print (self.normal)
-                return str(self.normal.x)+'x'+' + '+str(self.normal.y)+'y + '+str(self.normal.z)+'z + '+str(self.c)
-       
+                return str(self.normal.x)+'x'+' + '+str(self.normal.y)+'y + '+str(self.normal.z)+'z = '+str(self.c)
+            
 boi = Plane((2,4,5),(7,-8,1),(2,9,-5))
 
 print (boi.equation('Catisian'))
