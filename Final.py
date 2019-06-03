@@ -12,7 +12,7 @@ class Vector():
     def reduce(self):
         num = 2
         top = max(abs(self.x),abs(self.y),abs(self.z))
-        while num != top:
+        while num <= top:
             if self.x%num == 0 and self.y%num == 0 and self.z%num == 0:
                 self.x = self.x//num
                 self.y = self.y//num
@@ -21,7 +21,7 @@ class Vector():
             num += 1
         return (self.x,self.y,self.z)
 
-class Point:
+class Point():
 
     def __init__(self,x,y,z):
         self.point = (x,y,z)
@@ -58,9 +58,17 @@ def twoPlanes(plane1,plane2):
 
 # Plane and a line
 
-#def planeLine(line1,plane1):
-#    if dot(line1.dirvec, plane1.normal) == 0:
-#        if
+def planeLine(line1,plane1):
+    if dot(line1.dirvec, plane1.normal) == 0:
+        if isPointPlane(line1.point,plane1):
+            return line1
+        else:
+            return None
+    else:
+        ls = plane1.normal.x* line1.x + plane1.normal.y* line1.y + plane1.normal.z* line1.z
+        rs = plane1.normal.x* line1.dirVector.x + plane1.normal.y* line1.dirVector.y + plane1.normal.z* line1.dirVector.z
+        s = rs/-ls
+        return Point(line1.x + s*line1.dirVector.x, line1.y + s*dirVector.y, line1.z + s*dirVector.z)
 
 
 # If a point is on a plane
