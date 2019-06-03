@@ -1,0 +1,88 @@
+#Button/Lable Class
+#Programmer: Jackson Mitchell
+#Date: April 7 2019
+#Classes to Create a Button as well as a Lable Class
+import pygame
+class Button(object):
+
+    def __init__(self,rect,color=(0,0,0),word='',fill=(0,0,0),outlineSz=1,font='Arial',fsize=16,fontC=(0,0,0)):
+
+        self.width = rect[2]
+        self.height = rect[3]
+        self.postion = (rect[0],rect[1])
+        self.color = color
+        self.word = word
+        self.fill = fill
+        self.outlineSz = outlineSz
+        self.font = font
+        self.Fsize = fsize
+        self.fontC = fontC
+
+    #method to draw the Button
+    def draw(self,surface):
+        if self.fill != (0,0,0):
+            pygame.draw.rect(surface, self.fill, (self.postion[0], self.postion[1], self.width,self.height),0)
+        pygame.draw.rect(surface,self.color, (self.postion[0], self.postion[1], self.width,self.height), self.outlineSz)
+        buttonfont = pygame.font.SysFont(self.font, self.Fsize)
+        drawFont = buttonfont.render(self.word,True,self.fontC)
+        offset = ((self.width-drawFont.get_width())/2,(self.height-drawFont.get_height())/2)
+        surface.blit(drawFont, (self.postion[0]+offset[0], self.postion[1]+offset[1]))
+
+    #method for click detection on the button
+    def clicked(self,m):
+        x = m[0]
+        y = m[1]
+        if x >= self.postion[0] and y >= self.postion[1] and x <= self.postion[0] + self.width and y <= self.postion[1] + self.height:
+            return True
+        else:
+            return False
+
+    #method for Hover detection on the button
+    def hover(self,m,Nc,c,Increase,Orignal):
+        x = m[0]
+        y = m[1]
+
+        if x >= self.postion[0] and y >= self.postion[1] and x <= self.postion[0] + self.width and y <= self.postion[1] + self.height:
+            self.fill = Nc
+            self.outlineSz = Increase
+        else:
+            self.fill = c
+            self.outlineSz = Orignal
+
+#Lable class for Txt boxes
+class Lable(object):
+
+    #rect (x,y,w,h)
+
+    def __init__(self,rect,word='',bordor=False,fill=(0,0,0),font='Arial',fsize=16,fontC=(0,0,0)):
+
+        self.rect = rect
+        self.word = word
+        self.bordor = bordor
+        self.fill = fill
+        self.font = font
+        self.Fsize = fsize
+        self.fontC = fontC
+
+    #method to draw the Lable
+    def draw(self,surface,colorf=(0,0,0)):
+        if colorf != (0,0,0):
+            pygame.draw.rect(surface,colorf, (self.rect), 0)
+        if self.bordor == True:
+            pygame.draw.rect(surface,(0,0,0), (self.rect), 2)
+        buttonfont = pygame.font.SysFont(self.font, self.Fsize)
+        drawFont = buttonfont.render(self.word,True,self.fontC)
+        offset = ((self.rect[2]-drawFont.get_width())/2,(self.rect[3]-drawFont.get_height())/2)
+        surface.blit(drawFont, (self.rect[0]+offset[0], self.rect[1]+offset[1]))  
+
+    #Geter Methods for the lables atrbutes
+    def LablePos(self): 
+        return (self.rect[0],self.rect[1]) 
+    def Dementions(self):
+        return (self.rect[2],self.rect[3]) 
+    def changeC(self,c):
+        self.fill = c
+    def getLable(self):
+        return self.word
+    def changeLable(self,Newlable):
+        self.word = Newlable
