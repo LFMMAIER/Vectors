@@ -135,26 +135,23 @@ class Plane():
     
     #point cords in space (x,y,z)
     #Two dirVector a given dirction from a point (x,y,z)
-    def __init__(self,point,dirVector1,dirVector2):
+    def __init__(self,x,y,z,D):
 
-        self.point = Point(point[0],point[1],point[2])
-        self.dirVector1 = Vector(dirVector1[0],dirVector1[1],dirVector1[2])
-        self.dirVector2 = Vector(dirVector2[0],dirVector2[1],dirVector2[2])
-        self.normal = cross(self.dirVector1,self.dirVector2)
-        self.c = (point[0]*self.normal.x + point[1]*self.normal.y + point[2]*self.normal.z)
+        self.x = x
+        self.y = y
+        self.z = z
+        self.D = D
+        self.normal = (x,y,z)
 
-    def equation(self,typee):
-        if typee == 'Vector':
-                return '(x,y) = '+str(self.point.point)+' + t'+str(self.dirVector1.vec)+' + s'+str(self.dirVector2.vec)
-        elif typee == 'Parametic':
-                return str(self.point.x)+' + '+str(self.dirVector1.x)+'t'+' + '+str(self.dirVector2.x)+'s',str(self.point.y)+' + '+str(self.dirVector1.y)+'t'+' + '+str(self.dirVector2.y)+'s',str(self.point.z)+' + '+str(self.dirVector1.z)+'t'+' + '+str(self.dirVector2.z)+'s'
-        elif typee == 'Catisian':
-                #print (self.normal)
-                return str(self.normal.x)+'x'+' + '+str(self.normal.y)+'y + '+str(self.normal.z)+'z = '+str(self.c)
-            
-boi = Plane((2,4,5),(7,-8,1),(2,9,-5))
+        
+##        self.point = Point(point[0],point[1],point[2])
+##        self.dirVector1 = Vector(dirVector1[0],dirVector1[1],dirVector1[2])
+##        self.dirVector2 = Vector(dirVector2[0],dirVector2[1],dirVector2[2])
+##        self.c = (point[0]*self.normal.x + point[1]*self.normal.y + point[2]*self.normal.z)
 
-print (boi.equation('Catisian'))
+    def equation(self):
+        return str(self.x)+'x'+' + '+str(self.y)+'y + '+str(self.z)+'z = '+str(self.D)
+
 
 point = Point(1,2,3)
 pi = Plane((3,2,1),(3,2,1),(1,1,1))
