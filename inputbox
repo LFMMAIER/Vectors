@@ -1,0 +1,93 @@
+# A simple module to get user input allowing for backspace but not arrow keys or delete key
+# Parameters/Arguments:
+#   screen => window to draw the inputbox on
+#   self.question => prompt for the user
+#   self.rect => a self.rectangle giving the position and size of the inputbox
+# options parameters
+#   self.backClr=BACKGROUND_COLOR, textClr=TEXT_COLOR, self.borderClr=BORDER_COLOR
+# Called by:
+# from inputbox import *
+# userInput = ask(win,prompt,self.rect)
+# Font size and type are defined by constants could add these later as parameters
+# Constants are used to define the default values for the optional parameters so you can change this
+
+import pygame, pygame.font, pygame.event, pygame.draw, string
+from pygame.locals import *
+
+BACKGROUND_COLOR = (0,0,0)
+TEXT_COLOR = (255,255,255)
+BORDER_COLOR = (255,255,255)
+FONT_SIZE = 24
+FONT_TYPE = None
+TEXT_INDENT = 10
+VALID_KEYS = '-0123456789'
+
+def get_key():
+  while 1:
+    event = pygame.event.poll()
+    if event.type == KEYDOWN:
+      return event.key
+    else:
+      pass
+class inputbox(object):
+
+  def __init__(self,question,rect,backClr,textClr,borderClr):
+    self.question = question
+    self.rect = rect
+    self.backClr = backClr
+    self.textClr = textClr
+    self.borderClr = borderClr
+    
+  def display_box(self,screen):    #Note: the message is the prompt + what they type
+    "Print a message in a box at position self.rect"
+    if len(self.question) != 0:
+      fontobject = pygame.font.Font(FONT_TYPE,FONT_SIZE)
+      #self.rect(Surface, color, self.rect, width=0)
+      message_surface = fontobject.render(self.question, 1, self.textClr)
+      messageWidth = message_surface.get_width() + TEXT_INDENT * 2
+      if messageWidth > self.rect[2]:  # make the box bigger if the message goes out of the box
+        self.rect = (self.rect[0],self.rect[1],messageWidth,self.rect[3])
+    pygame.draw.rect(screen, self.backClr, self.rect, 0)
+    pygame.draw.rect(screen, self.borderClr, self.rect, 1)
+    if len(self.question) != 0:
+      yOffSet = (self.rect[3] - message_surface.get_height()) // 2 + 1    # vertically centre the text in the input box
+      screen.blit(message_surface, (self.rect[0]+TEXT_INDENT,self.rect[1]+yOffSet))
+    pygame.display.flip()
+
+  def clicked(self,m):
+    x = m[0]
+    y = m[1]
+    if x >= self.rect[0] and y >= self.rect[1] and x <= self.rect[0] + self.rect[2] and y <= self.rect[1] + self.rect[3]:
+        return True
+    else:
+        return False
+
+  def ask(self,screen):
+    global VALID_KEYS
+    "ask(screen, self.question) -> answer"
+    pygame.font.init()
+    current_string = []
+    self.question = self.question + ''.join(current_string)
+    inputbox.display_box(self,screen)
+    enteringText = True
+    while enteringText:
+      for event in pygame.event.get():
+        if event.type == pygame.KEYDOWN:
+          if event.key == K_BACKSPACE:
+            current_string = current_string[0:-1]
+          elif event.key == K_RETURN:
+            enteringText = False
+          elif chr(event.key) in VALID_KEYS:
+            self.question = self.question + chr(event.key)
+      inputbox.display_box(self,screen)
+    return ''.join(current_string)
+
+##def main():
+##  screen = pygame.display.set_mode((320,240))
+##  screen.fill((0,255,255))
+##  userInput = ask(screen, "Name: ", (20,50,250,40),self.textClr=(0,255,0))
+##  userInput = ask(screen, "0: ", (20,70,250,40),self.textClr=(0,255,0))
+##  print (userInput + " was entered")
+##  pygame.quit()
+##
+##if __name__ == '__main__': main()
