@@ -1,0 +1,42 @@
+#MAIN LINE
+import pygame
+from buttons import *
+from inputbox import *
+pygame.init()
+
+#Main Function
+def redraw_win():
+    win.fill((255,255,255))
+    title.draw(win)
+    title2.draw(win)
+    x.display_box(win)
+    pygame.display.update()
+
+
+#win = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+win = pygame.display.set_mode((600,600))
+title = Lable((50,50,175,70),'LINE',True,fsize=50)
+title2 = Lable((250,50,175,70),'PLANE',True,fsize=50)
+x = inputbox("x: ",(200,300,250,40),(255,255,255),(0,0,0),(0,0,0))
+On = True                                     
+while On:
+    redraw_win()
+    pygame.time.delay(10)              
+
+    for event in pygame.event.get():    
+        if event.type == pygame.QUIT:   
+            On = False
+         
+        if event.type == pygame.KEYDOWN:       
+            if event.key == pygame.K_ESCAPE:    
+                On = False                              
+
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            clickPos = pygame.mouse.get_pos()
+            if x.clicked(clickPos) == True:
+                x.ask(win)
+
+##        if event.type == pygame.MOUSEMOTION:  
+##            clickPos = pygame.mouse.get_pos()
+                                    
+pygame.quit()                   
