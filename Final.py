@@ -156,7 +156,6 @@ boi = Plane((2,4,5),(7,-8,1),(2,9,-5))
 
 print (boi.equation('Catisian'))
 
-
 point = Point(1,2,3)
 pi = Plane((3,2,1),(3,2,1),(1,1,1))
 
