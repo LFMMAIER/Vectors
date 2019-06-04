@@ -60,7 +60,15 @@ def twoPlanes(plane1,plane2):
         else:
             return None
     else:
-        return 
+        if plane1.x != 0 and plane2.x != 0:
+            plane3 = Plane(plane1.x*plane2.x + -1*plane2.x*plane1.x, plane1.y*plane2.x + -1*plane2.y*plane1.x, plane1.z*plane2.x + -1*plane2.z*plane1.x, plane1.D*plane2.x + -1*plane2.D*plane1.x)
+            dirz = 1
+            pz = 0
+            diry = -plane3.z/plane3.y
+            py = plane3.D/plane3.y
+            dirx = -dirz*plane1.z -diry*plane1.y
+            px = plane1.D - pz*plane1.z - py*plane1.y
+        return Line((px,py,pz),(dirx,diry,dirz),'3d')
 
 #3 Planes
 
@@ -138,7 +146,7 @@ class Line():
                 return str(self.normal.x)+'x'+' + '+str(self.normal.y)+'y = '+str(c)
         if self.space == '3d':
             if typee == 'Vector':
-                return '(x,y,y) = '+str(self.point.point)+' + t'+str(self.dirVector.vec)
+                return '(x,y,z) = '+str(self.point.point)+' + t'+str(self.dirVector.vec)
             elif typee == 'Parametic':
                 return str(self.point.x)+' + '+str(self.dirVector.x)+'t',str(self.point.y)+' + '+str(self.dirVector.y)+'t',str(self.point.z)+' + '+str(self.dirVector.z)+'t'
             elif typee == 'Sclar':
@@ -156,7 +164,7 @@ class Plane():
         self.normal = Vector(x,y,z)
 
     def __str__(self):
-        return self.equation
+        return self.equation()
 
         
 ##        self.point = Point(point[0],point[1],point[2])
@@ -172,6 +180,12 @@ p = Point(1,2,3)
 pi = Plane(4,2,-1,8)
 l = Line((3,1,2),(1,-4,-8),'3d')
 
-print(pi.equation())
-print(isPointPlane(p,pi))
-print(linePlane(l,pi))
+#print(pi.equation())
+#print(isPointPlane(p,pi))
+#print(linePlane(l,pi))
+
+
+pi1 = Plane(1,-1,1,3)
+pi2 = Plane(2,2,-2,3)
+
+print(twoPlanes(pi1,pi2))
