@@ -1,6 +1,7 @@
 import math
 import pygame
 
+#Vector class with built in reduction of values
 class Vector():
 
     def __init__(self,x,y,z):
@@ -8,6 +9,9 @@ class Vector():
         self.y = y
         self.z = z
         self.vec = Vector.reduce(self)
+
+    def __str__(self):
+        return str(self.vec)
 
     def reduce(self):
         num = 2
@@ -21,6 +25,7 @@ class Vector():
             num += 1
         return (self.x,self.y,self.z)
 
+#Simple point class for management
 class Point():
 
     def __init__(self,x,y,z):
@@ -29,28 +34,33 @@ class Point():
         self.y = y
         self.z = z
 
-# Cross product function
+    def __str__(self):
+        return str(self.point)
+
+# Cross product
 
 def cross(vec1,vec2):
+    if type(vec1) != Vector or type(vec2) != Vector:
+        raise Exception('You tried to cross a non vector')
     return Vector(vec1.y*vec2.z - vec1.z*vec2.y, vec1.z*vec2.x - vec1.x*vec2.z, vec1.x*vec2.y - vec1.y*vec2.x)
 
 # Dot product
 
 def dot(vec1,vec2):
-    return vec1.x*vec2.x + vec1.y*vec2.y + vec1.z*vec2.z
-        
+    if type(vec1) != Vector or type(vec2) != Vector:
+        raise Exception('You tried to dot a non vector')
+    return vec1.x*vec2.x + vec1.y*vec2.y + vec1.z*vec2.z    
     
 #2 Planes
 
 def twoPlanes(plane1,plane2):
     if plane1.normal == plane2.normal:
-        if plane1.eqn == plane2.eqn:
+        if plane1.equation() == plane2.equation():
             return plane1
         else:
             return None
     else:
-        #Need calculations here to determine the point and the direction vector
-        return line(Vector(dirVec), point)
+        return 
 
 #3 Planes
 
@@ -58,22 +68,22 @@ def twoPlanes(plane1,plane2):
 
 # Plane and a line
 
-def planeLine(line1,plane1):
-    if dot(line1.dirvec, plane1.normal) == 0:
+def linePlane(line1,plane1):
+    if dot(line1.dirVector, plane1.normal) == 0:
         if isPointPlane(line1.point,plane1):
             return line1
         else:
             return None
     else:
-        ls = plane1.normal.x* line1.x + plane1.normal.y* line1.y + plane1.normal.z* line1.z
-        rs = plane1.normal.x* line1.dirVector.x + plane1.normal.y* line1.dirVector.y + plane1.normal.z* line1.dirVector.z
+        ls = plane1.normal.x* line1.point.x + plane1.normal.y* line1.point.y + plane1.normal.z* line1.point.z
+        rs = plane1.normal.x* line1.dirVector.x + plane1.normal.y* line1.dirVector.y + plane1.normal.z* line1.dirVector.z + plane1.D
         s = rs/-ls
-        return Point(line1.x + s*line1.dirVector.x, line1.y + s*dirVector.y, line1.z + s*dirVector.z)
+        return Point(line1.point.x + s*line1.dirVector.x,line1.point.y + s*line1.dirVector.y,line1.point.z + s*line1.dirVector.z)
 
 
 # If a point is on a plane
 def isPointPlane(point1,plane1):
-    if plane1.normal.x * point1.x + plane1.normal.y * point1.y + plane1.normal.z * point1.z == plane1.c: 
+    if plane1.normal.x * point1.x + plane1.normal.y * point1.y + plane1.normal.z * point1.z == plane1.D: 
         return True
     else:
         return False
@@ -96,6 +106,9 @@ class Line():
             self.dirVector = Vector(dirVector[0],dirVector[1],dirVector[2])
         self.space = space
         self.normal = Line.norm(dirVector,space)
+
+    def __str__(self):
+        return self.equation('Vector')
 
     #retuns the normal vector of the line
     @staticmethod
@@ -133,15 +146,17 @@ class Line():
 
 class Plane():
     
-    #point cords in space (x,y,z)
-    #Two dirVector a given dirction from a point (x,y,z)
+    #Define a plane using its cartisian equation
     def __init__(self,x,y,z,D):
 
         self.x = x
         self.y = y
         self.z = z
         self.D = D
-        self.normal = (x,y,z)
+        self.normal = Vector(x,y,z)
+
+    def __str__(self):
+        return self.equation
 
         
 ##        self.point = Point(point[0],point[1],point[2])
@@ -153,8 +168,10 @@ class Plane():
         return str(self.x)+'x'+' + '+str(self.y)+'y + '+str(self.z)+'z = '+str(self.D)
 
 
-point = Point(1,2,3)
-pi = Plane((3,2,1),(3,2,1),(1,1,1))
+p = Point(1,2,3)
+pi = Plane(4,2,-1,8)
+l = Line((3,1,2),(1,-4,-8),'3d')
 
-print(pi.equation('Catisian'))
-print(isPointPlane(point,pi))
+print(pi.equation())
+print(isPointPlane(p,pi))
+print(linePlane(l,pi))
