@@ -68,7 +68,7 @@ def twoPlanes(plane1,plane2):
             py = plane3.D/plane3.y
             dirx = (-dirz*plane1.z -diry*plane1.y)/plane1.x
             px = (plane1.D - pz*plane1.z - py*plane1.y)/plane1.x
-        return Line((px,py,pz),(dirx,diry,dirz),'3d')
+        return Line((px,py,pz),(dirx*plane3.y*plane1.x,diry*plane3.y*plane1.x,dirz*plane3.y*plane1.x),'3d')
 
 #3 Planes
 
