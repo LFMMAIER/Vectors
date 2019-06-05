@@ -61,13 +61,13 @@ def twoPlanes(plane1,plane2):
             return None
     else:
         if plane1.x != 0 and plane2.x != 0:
-            plane3 = Plane(plane1.x*plane2.x + -1*plane2.x*plane1.x, plane1.y*plane2.x + -1*plane2.y*plane1.x, plane1.z*plane2.x + -1*plane2.z*plane1.x, plane1.D*plane2.x + -1*plane2.D*plane1.x)
+            plane3 = Plane(plane1.x*plane2.x - plane2.x*plane1.x, plane1.y*plane2.x - plane2.y*plane1.x, plane1.z*plane2.x - plane2.z*plane1.x, plane1.D*plane2.x - plane2.D*plane1.x)
             dirz = 1
             pz = 0
             diry = -plane3.z/plane3.y
             py = plane3.D/plane3.y
-            dirx = -dirz*plane1.z -diry*plane1.y
-            px = plane1.D - pz*plane1.z - py*plane1.y
+            dirx = (-dirz*plane1.z -diry*plane1.y)/plane1.x
+            px = (plane1.D - pz*plane1.z - py*plane1.y)/plane1.x
         return Line((px,py,pz),(dirx,diry,dirz),'3d')
 
 #3 Planes
@@ -185,7 +185,7 @@ l = Line((3,1,2),(1,-4,-8),'3d')
 #print(linePlane(l,pi))
 
 
-pi1 = Plane(1,-1,1,3)
-pi2 = Plane(2,2,-2,3)
+pi1 = Plane(4,3,3,2)
+pi2 = Plane(5,2,3,-5)
 
 print(twoPlanes(pi1,pi2))
