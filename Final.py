@@ -60,15 +60,28 @@ def twoPlanes(plane1,plane2):
         else:
             return None
     else:
-        if plane1.x != 0 and plane2.x != 0:
-            plane3 = Plane(plane1.x*plane2.x - plane2.x*plane1.x, plane1.y*plane2.x - plane2.y*plane1.x, plane1.z*plane2.x - plane2.z*plane1.x, plane1.D*plane2.x - plane2.D*plane1.x)
-            dirz = 1
-            pz = 0
-            diry = -plane3.z/plane3.y
-            py = plane3.D/plane3.y
-            dirx = (-dirz*plane1.z -diry*plane1.y)/plane1.x
-            px = (plane1.D - pz*plane1.z - py*plane1.y)/plane1.x
-        return Line((px,py,pz),(dirx*plane3.y*plane1.x,diry*plane3.y*plane1.x,dirz*plane3.y*plane1.x),'3d')
+##        if plane1.x != 0 and plane2.x != 0:
+##            plane3 = Plane(plane1.x*plane2.x - plane2.x*plane1.x, plane1.y*plane2.x - plane2.y*plane1.x, plane1.z*plane2.x - plane2.z*plane1.x, plane1.D*plane2.x - plane2.D*plane1.x)
+##            dirz = 1
+##            pz = 0
+##            diry = -plane3.z/plane3.y
+##            py = plane3.D/plane3.y
+##            dirx = (-dirz*plane1.z -diry*plane1.y)/plane1.x
+##            px = (plane1.D - pz*plane1.z - py*plane1.y)/plane1.x            
+##        return Line((px,py,pz),(dirx*plane3.y*plane1.x,diry*plane3.y*plane1.x,dirz*plane3.y*plane1.x),'3d')
+
+    #Solution cross the two normal vectors. Then all I need to figure out is a point.
+
+    dirVec = cross(plane1.normal,plane2.normal)
+    if plane1.x != 0 and plane2.x 1= 0:
+        px = 0
+        py = plane1.D
+        if plane1.z != 0:
+            py = py/plane1.z
+        pointVals = 
+    
+    
+    return Line(pointVals, dirVec, '3d')
 
 #3 Planes
 
