@@ -2,22 +2,70 @@
 import pygame
 from buttons import *
 from inputbox import *
+from Grid import *
+from VectorClass import *
 pygame.init()
+buttonOnfill = (255,69,8)
 
 #Main Function
 def redraw_win():
     win.fill((255,255,255))
     title.draw(win)
     title2.draw(win)
-    x.display_box(win)
+    #Drawing plane inputboxs
+    if vectorbutton.fill == buttonOnfill:
+        planePoint.draw(win)
+        planeVec1.draw(win)
+        planeVec2.draw(win)
+    if cartianbutton.fill == buttonOnfill:
+        planeCartisan.draw(win)
+    #Drawing Line inputboxs
+    LinePoint.draw(win)
+    LineVec1.draw(win)
+    #Line Buttons
+    r3button.draw(win)
+    r2button.draw(win)
+    #Draw buttons
+    addline.draw(win)
+    addplane.draw(win)
+    delete.draw(win)
+    cartianbutton.draw(win)
+    vectorbutton.draw(win)
+
+    EquationsSelect.draw(win)
+    
     pygame.display.update()
 
 
 #win = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-win = pygame.display.set_mode((600,600))
-title = Lable((50,50,175,70),'LINE',True,fsize=50)
-title2 = Lable((250,50,175,70),'PLANE',True,fsize=50)
-x = inputbox("x: ",(200,300,250,40),(255,255,255),(0,0,0),(0,0,0))
+win = pygame.display.set_mode((1200,1200))
+title = Lable((100,50,250,70),'LINE',True,fsize=50)
+title2 = Lable((400,50,250,70),'PLANE',True,fsize=50)
+#x = inputbox("x: ",(200,300,250,40),(255,255,255),(0,0,0),(0,0,0))
+
+#inputboxes for planes
+planePoint = Textboxgird(1,3,(400,150,250,25),['x:','y:','z:'],thinkness=2,fsize=24)
+planeVec1 = Textboxgird(1,3,(400,205,250,25),['x:','y:','z:'],thinkness=2,fsize=24)
+planeVec2 = Textboxgird(1,3,(400,260,250,25),['x:','y:','z:'],thinkness=2,fsize=24)
+planeCartisan = Textboxgird(4,1,(400,150,250,140),['x:','y:','z:','D:'],thinkness=1,gap=7,fsize=24)
+
+#inputboxes for lines
+LinePoint = Textboxgird(1,2,(100,150,250,25),['x:','y:'],thinkness=2,fsize=24)
+LineVec1 = Textboxgird(1,2,(100,210,250,25),['x:','y:'],thinkness=2,fsize=24)
+#R3 to R2 changing Button
+r3button = Button((40,80,50,25),(0,0,0),'R3',fsize=24)
+r2button = Button((40,50,50,25),(0,0,0),'R2',fsize=24,fill=buttonOnfill)
+
+
+EquationsSelect = equationslector(12,(700,50,250,400),[],gap=1,sfill=buttonOnfill)
+
+addline = Button((300,240,50,25),(0,0,0),'add',fsize=24)
+addplane = Button((590,300,50,25),(0,0,0),'add',fsize=24)
+cartianbutton = Button((405,300,100,25),(0,0,0),'Cartesian',fsize=24)
+vectorbutton = Button((510,300,75,25),(0,0,0),'Vector',fsize=24,fill=buttonOnfill)
+delete = Button((775,460,175,25),(0,0,0),'Delete Selected',fsize=24)
+
+
 On = True                                     
 while On:
     redraw_win()
@@ -29,14 +77,53 @@ while On:
          
         if event.type == pygame.KEYDOWN:       
             if event.key == pygame.K_ESCAPE:    
-                On = False                              
+                On = False
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             clickPos = pygame.mouse.get_pos()
-            if x.clicked(clickPos) == True:
-                x.ask(win)
 
-##        if event.type == pygame.MOUSEMOTION:  
-##            clickPos = pygame.mouse.get_pos()
+            if addplane.clicked(clickPos):
+                #values = planeCartisan.givevals()
+                #EquationsSelect.addEquaton(Plane(values[0],values[1],values[2],values[3]))
+            
+            if delete.clicked(clickPos):
+                EquationsSelect.removeSelected()
+
+            if r3button.clicked(clickPos):
+                r2button.fill = (0,0,0)
+                r3button.fill = buttonOnfill
+                #changes the txtboxes for the line to R3
+                LinePoint = Textboxgird(1,3,(100,150,250,25),['x:','y:','z:'],thinkness=2,fsize=24)
+                LineVec1 = Textboxgird(1,3,(100,210,250,25),['x:','y:','z:'],thinkness=2,fsize=24)
+            if r2button.clicked(clickPos):
+                r2button.fill = buttonOnfill
+                r3button.fill = (0,0,0)
+                #changes the txtboxes for the line to R2
+                LinePoint = Textboxgird(1,2,(100,150,250,25),['x:','y:'],thinkness=2,fsize=24)
+                LineVec1 = Textboxgird(1,2,(100,210,250,25),['x:','y:'],thinkness=2,fsize=24)
+
+            #dection for buttons that change the plane inputs
+            if cartianbutton.clicked(clickPos):
+                vectorbutton.fill = (0,0,0)
+                cartianbutton.fill = buttonOnfill
+            if vectorbutton.clicked(clickPos):
+                vectorbutton.fill = buttonOnfill
+                cartianbutton.fill = (0,0,0)
+            
+
+            #Check inputbox dectction
+            #print(vectorbutton.fill,cartianbutton.fill,buttonOnfill)
+            if vectorbutton.fill == buttonOnfill:
+                planePoint.clickedBox(clickPos,win)
+                planeVec1.clickedBox(clickPos,win)
+                planeVec2.clickedBox(clickPos,win)
+            if cartianbutton.fill == buttonOnfill:
+                planeCartisan.clickedBox(clickPos,win)
+            LinePoint.clickedBox(clickPos,win)
+            LineVec1.clickedBox(clickPos,win)
+
+            #Equation Selector
+            EquationsSelect.select(clickPos)
+
                                     
-pygame.quit()                   
+pygame.quit()                           
