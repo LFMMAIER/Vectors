@@ -72,16 +72,19 @@ def twoPlanes(plane1,plane2):
 
     #Solution cross the two normal vectors. Then all I need to figure out is a point.
 
-    dirVec = cross(plane1.normal,plane2.normal)
-    if plane1.x != 0 and plane2.x 1= 0:
-        px = 0
-        py = plane1.D
-        if plane1.z != 0:
-            py = py/plane1.z
-        pointVals = 
-    
-    
-    return Line(pointVals, dirVec, '3d')
+        dirVec = cross(plane1.normal,plane2.normal)
+        if plane1.y != 0 and plane2.y != 0:
+            px = 0
+            pz = (plane2.D - plane2.y*(plane1.D/plane1.y))/(plane2.y*(-plane1.z/plane1.y) + plane2.z)
+            py = (plane1.D - pz)/plane1.y
+        elif plane1.z != 0 and plane2.z != 0:
+            px = 0
+        elif plane1.x != 0 and plane2.x != 0:
+            pz = 0
+        else:
+            raise Exception('Hey, so something in the finding the line of intersection of two planes messed up')
+        
+        return Line((px,py,pz), (dirVec.x,dirVec.y,dirVec.z), '3d')
 
 #3 Planes
 
@@ -198,7 +201,7 @@ l = Line((3,1,2),(1,-4,-8),'3d')
 #print(linePlane(l,pi))
 
 
-pi1 = Plane(4,3,3,2)
-pi2 = Plane(5,2,3,-5)
+pi1 = Plane(1,2,1,4)
+pi2 = Plane(2,1,-1,5)
 
 print(twoPlanes(pi1,pi2))
