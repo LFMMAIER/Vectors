@@ -1,0 +1,269 @@
+#Grid Class
+#Programmer: Jackson Mitchell
+#Date: April 7 2019
+#Classes to Create a Grid of squares as well as child classes Menu, text box gird and equation gird
+from buttons import *
+from inputbox import *
+from VectorClass import *
+
+#create a constant to deter if an equation is a line
+linetype = type(Line((1,1,1),(1,1,1),'3d'))
+planetype = type(Plane(1,1,1,1))
+
+
+class Grid(object):
+
+    def __init__(self,rows,colums,rect,thinkness=1,gap=0,bordor=True):
+
+        self.rows = rows
+        self.colums = colums
+        self.rect = rect
+        self.thinkness = thinkness
+        self.gap = gap
+        self.bordor = bordor
+        self.x = rect[0]
+        self.y = rect[1]
+        self.cellW = (rect[2] - (gap * (colums + 1))) / colums
+        self.cellH = (rect[3] - (gap * (rows + 1))) / rows
+        self.currentCell = -1
+        self.totalCells = rows * colums
+        self.cellCordinates = self.loadCordinates()
+
+    #Creates a list of Cords for the grids cells
+    def loadCordinates(self):
+        cellCords = []
+        gy = self.y + self.gap
+        for r in range(self.rows):
+            gx = self.x + self.gap
+            for c in range(self.colums):
+                cellRec = (gx,gy,self.cellW,self.cellH)
+                cellCords.append(cellRec)
+                gx += self.cellW + self.gap
+            gy += self.cellH + self.gap
+        return cellCords
+
+    def draw(self,win,colour=(0,0,0)):
+        # draws the grid of cells
+        if self.bordor == True:
+            pygame.draw.rect(win,colour,self.rect,self.thinkness) 
+        for i,crec in enumerate(self.cellCordinates):
+            if i == self.currentCell:
+                pygame.draw.rect(win,(255,0,0),crec,self.thinkness)
+            else:
+                pygame.draw.rect(win,colour,crec,self.thinkness)
+     
+#Menu Sub Class for creating Menus with buttons
+class Menu(Grid):
+
+    def __init__(self,rows,colums,rect,ButtonLabels,thinkness=1,gap=0,bordor=True,colour=(0,0,0),tfill=(0,0,0),font='Arial',fsize=16,fontC=(0,0,0)):
+        Grid.__init__(self,rows,colums,rect,thinkness,gap,bordor)
+        self.labels = ButtonLabels
+        self.colour = colour
+        self.tfill = tfill
+        self.font = font
+        self.fsize = fsize
+        self.fontC = fontC
+        self.buttons = self.ButtonsList()
+
+    def ButtonsList(self):
+        #complies a list of buttons for the menus cells
+        butlist = []
+        for i,butR in enumerate(self.cellCordinates):
+            buttn = Button(butR,color=self.colour,word=self.labels[i],fill=self.bfill,outlineSz=self.thinkness,font=self.font,fsize=self.fsize,fontC=self.fontC)
+            butlist.append(buttn)
+        return butlist
+
+    def draw(self,win):
+        # draws the grid of cells
+        if self.bordor == True:
+            pygame.draw.rect(win,(0,0,0),self.rect,self.thinkness) 
+        for Bcell in self.buttons:
+            Bcell.draw(win)
+            
+    def clickedCell(self,mp):
+        #Checks what cell is clicked
+        for i,Bcell in enumerate(self.buttons):
+            if Bcell.clicked(mp) == True:
+                return (self.labels[i],True)
+        return (None,False)
+    
+    def OverCell(self,mp,Ncolor,Increase,Orignal):
+        #checks witch cell the mouse is over
+        for Bcell in self.buttons:
+            Bcell.hover(mp,Ncolor,self.bfill,Increase,Orignal)
+
+#Menu Sub Class for creating Menus with buttons
+class Textboxgird(Grid):
+
+    def __init__(self,rows,colums,rect,txtlables,thinkness=1,gap=0,bordor=True,colour=(0,0,0),bfill=(0,0,0),font='Arial',fsize=16,fontC=(0,0,0)):
+        Grid.__init__(self,rows,colums,rect,thinkness,gap,bordor)
+        self.labels = txtlables
+        self.colour = colour
+        self.bfill = bfill
+        self.font = font
+        self.fsize = fsize
+        self.fontC = fontC
+        self.txtboxs = self.txtboxlist()
+
+    def txtboxlist(self):
+        #complies a list of buttons for the menus cells
+        txtlist = []
+        for i,txtrec in enumerate(self.cellCordinates):
+            txtb = inputbox(self.labels[i],txtrec,(255,255,255),(0,0,0),(0,0,0))
+            txtlist.append(txtb)
+        return txtlist
+
+    def draw(self,win):
+        # draws the grid of cells
+        for txtcell in self.txtboxs:
+            txtcell.display_box(win)
+
+    def givevals(self):
+        vals = []
+        for txtcell in self.txtboxs:
+            vals.append(txtcell.giveval())
+        return (vals)
+            
+    def clickedBox(self,mp,win):
+        #Checks what cell is clicked
+        for i,txtcell in enumerate(self.txtboxs):
+            if txtcell.clicked(mp) == True:
+                 txtcell.ask(win)
+
+class equationslector(Grid):
+
+    def __init__(self,rows,rect,Equations,thinkness=1,gap=0,bordor=True,colour=(0,0,0),sfill=(0,0,0),font='Arial',fsize=16,fontC=(0,0,0)):
+        Grid.__init__(self,rows,1,rect,thinkness,gap,bordor)
+        self.Equations = Equations
+        self.colour = colour
+        self.sfill = sfill
+        self.font = font
+        self.fsize = fsize
+        self.fontC = fontC
+        self.selected = []
+        self.Equationsbuttons = self.EquationsButtons()
+
+    def EquationsButtons(self):
+        #complies a list of buttons for the menus cells
+        butlist = []
+        for i,butR in enumerate(self.cellCordinates):
+            #print (len(self.Equations),i)
+            #print (self.Equations)
+            if len(self.Equations) <= i:
+                break
+            if type(self.Equations[i]) == linetype:
+                if self.Equations[i].space == '3d':
+                    buttn = Button(butR,color=self.colour,word=self.Equations[i].equation('Vector'),fill=(0,0,0),outlineSz=self.thinkness,font=self.font,fsize=self.fsize,fontC=self.fontC)
+                else:
+                    buttn = Button(butR,color=self.colour,word=self.Equations[i].equation('Sclar'),fill=(0,0,0),outlineSz=self.thinkness,font=self.font,fsize=self.fsize,fontC=self.fontC)
+            else:
+                buttn = Button(butR,color=self.colour,word=self.Equations[i].equation(),fill=(0,0,0),outlineSz=self.thinkness,font=self.font,fsize=self.fsize,fontC=self.fontC)
+            butlist.append(buttn)
+            #print (self.Equations[i].equation())
+        return butlist
+
+    def draw(self,win):
+        # draws the grid of cells
+        pygame.draw.rect(win,(0,0,0),self.rect,3)
+        for i,bcell in enumerate(self.Equationsbuttons):
+            #Changes all the slected cells to the select colour
+            if i in self.selected:
+                bcell.fill = self.sfill
+            else:
+                bcell.fill = (0,0,0)
+            bcell.draw(win)
+
+    def select(self,mp):
+
+        for i,bcell in enumerate(self.Equationsbuttons):
+            if bcell.clicked(mp) == True:
+                #print ('boi')
+                #checks if the cell has already been clicked
+                if i in self.selected:
+                    bcell.fill = (0,0,0)
+                    self.selected.remove(i)
+                else:    
+                    self.selected.append(i)
+                #checks if the seceted cell is a line in 2 space
+                if type(self.Equations[i]) == linetype:
+                    if self.Equations[i].space == '2d':
+                         if len(self.selected) > 2:
+                            for n in self.selected:
+                                self.Equationsbuttons[n].fill = (0,0,0)
+                            self.selected = [i]
+                         if type(self.Equations[self.selected[0]]) == linetype:
+                             if self.Equations[self.selected[0]].space == '2d':
+                                 pass
+                             else:
+                                 self.selected = [i]
+                         else:
+                             self.selected = [i]
+
+            #string of if statments to only allow r2 equations with r2 equations
+            if self.selected != []:
+                if type(self.Equations[self.selected[0]]) == linetype:
+                    if self.Equations[self.selected[0]].space == '2d':
+                        if len(self.selected) > 1:
+                            if type(self.Equations[self.selected[-1]]) == planetype:
+                                self.selected = [self.selected[-1]]
+                            elif type(self.Equations[self.selected[-1]]) == linetype:
+                                if self.Equations[self.selected[-1]].space != '2d':
+                                    self.selected = [self.selected[-1]]
+
+            #counts number of lines and planes
+            numoflines = sum([1 for n in self.selected if type(self.Equations[n]) == linetype])
+            numofPlanes = sum([1 for n in self.selected if type(self.Equations[n]) == planetype])
+
+            #print (numoflines,numofPlanes)
+
+            #Makes sure the correct amount of equations are selected
+            if len(self.selected) > 3:
+                self.Equationsbuttons[self.selected[0]].fill = (0,0,0)
+                self.selected = self.selected[1:]
+            if numofPlanes > 0 and numoflines > 1:
+                self.Equationsbuttons[self.selected[0]].fill = (0,0,0)
+                self.selected = self.selected[1:]
+            if numofPlanes > 1 and numoflines > 0:
+                self.Equationsbuttons[self.selected[0]].fill = (0,0,0)
+                self.selected = self.selected[1:]
+            if numoflines > 2:
+                self.Equationsbuttons[self.selected[0]].fill = (0,0,0)
+                self.selected = self.selected[1:]
+
+    #adds a new equation
+    def addEquaton(self,eq):
+        self.Equations.append(eq)
+        self.selected = []
+        self.Equationsbuttons = self.EquationsButtons()
+
+    #return selected equations
+    def reurnSelected(self):
+        returing = []
+        for i,eq in enumerate(self.Equations):
+            if i in self.selected:
+                returing.append(eq)
+        self.selected = []
+        return returing
+
+    #removes selected equations
+    def removeSelected(self):
+        equations_to_delete = []
+        for i in self.selected:
+            equations_to_delete.append(self.Equations[i])
+        for eq in equations_to_delete:
+            self.Equations.remove(eq)
+        self.selected = []
+        self.Equationsbuttons = self.EquationsButtons()
+            
+
+        
+
+
+
+
+
+
+
+
+
+
