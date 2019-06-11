@@ -73,14 +73,19 @@ def twoPlanes(plane1,plane2):
     #Solution cross the two normal vectors. Then all I need to figure out is a point.
 
         dirVec = cross(plane1.normal,plane2.normal)
-        if plane1.y != 0 and plane2.y != 0:
+        #if plane1.y != 0 and plane2.y != 0:
+        #    px = 0
+        #    pz = (plane2.D - plane2.y*(plane1.D/plane1.y))/(plane2.y*(-plane1.z/plane1.y) + plane2.z)
+        #    py = (plane1.D - pz)/plane1.y
+        if plane1.z != 0 and plane2.z != 0:
             px = 0
-            pz = (plane2.D - plane2.y*(plane1.D/plane1.y))/(plane2.y*(-plane1.z/plane1.y) + plane2.z)
-            py = (plane1.D - pz)/plane1.y
-        elif plane1.z != 0 and plane2.z != 0:
-            px = 0
-        elif plane1.x != 0 and plane2.x != 0:
-            pz = 0
+            print(plane2.D - plane2.z*(plane1.D/plane1.z))
+            pz = (plane2.D - plane2.z*(plane1.D/plane1.z))/(plane2.z*(-plane1.y/plane1.z) + plane2.y)
+            py = (plane1.D - pz)/plane1.z
+        #if plane1.x != 0 and plane2.x != 0:
+        #    pz = 0
+        #    py = (plane2.D - plane2.x*(plane1.D/plane1.x))/(plane2.x*(-plane1.y/plane1.x) + plane2.x)
+        #    px = (plane1.D - py)/plane1.x
         else:
             raise Exception('Hey, so something in the finding the line of intersection of two planes messed up')
         
