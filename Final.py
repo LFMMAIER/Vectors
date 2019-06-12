@@ -73,23 +73,59 @@ def twoPlanes(plane1,plane2):
     #Solution cross the two normal vectors. Then all I need to figure out is a point.
 
         dirVec = cross(plane1.normal,plane2.normal)
-        #if plane1.y != 0 and plane2.y != 0:
-        #    px = 0
-        #    pz = (plane2.D - plane2.y*(plane1.D/plane1.y))/(plane2.y*(-plane1.z/plane1.y) + plane2.z)
-        #    py = (plane1.D - pz)/plane1.y
-        if plane1.z != 0 and plane2.z != 0:
-            px = 0
-            print(plane2.D - plane2.z*(plane1.D/plane1.z))
-            pz = (plane2.D - plane2.z*(plane1.D/plane1.z))/(plane2.z*(-plane1.y/plane1.z) + plane2.y)
-            py = (plane1.D - pz)/plane1.z
-        #if plane1.x != 0 and plane2.x != 0:
-        #    pz = 0
-        #    py = (plane2.D - plane2.x*(plane1.D/plane1.x))/(plane2.x*(-plane1.y/plane1.x) + plane2.x)
-        #    px = (plane1.D - py)/plane1.x
-        else:
-            raise Exception('Hey, so something in the finding the line of intersection of two planes messed up')
         
-        return Line((px,py,pz), (dirVec.x,dirVec.y,dirVec.z), '3d')
+##        if plane1.y != 0 and plane2.y != 0:
+##            px = 0
+##            pz = (plane2.D - plane2.y*(plane1.D/plane1.y))/(plane2.y*(-plane1.z/plane1.y) + plane2.z)
+##            py = (plane1.D - pz)/plane1.y
+##        if plane1.z != 0 and plane2.z != 0:
+##            px = 0
+##            print(plane2.D - plane2.z*(plane1.D/plane1.z))
+##            pz = (plane2.D - plane2.z*(plane1.D/plane1.z))/(plane2.z*(-plane1.y/plane1.z) + plane2.y)
+##            py = (plane1.D - pz)/plane1.z
+##        if plane1.x != 0 and plane2.x != 0:
+##            pz = 0
+##            py = (plane2.D - plane2.x*(plane1.D/plane1.x))/(plane2.x*(-plane1.y/plane1.x) + plane2.x)
+##            px = (plane1.D - py)/plane1.x
+##        else:
+##            raise Exception('Hey, so something in the finding the line of intersection of two planes messed up')
+
+        if plane1.x != 0 and plane2.x != 0:
+            plane3 = Plane(plane1.x*plane2.x - plane2.x*plane1.x, plane1.y*plane2.x - plane2.y*plane1.x, plane1.z*plane2.x - plane2.z*plane1.x, plane1.D*plane2.x - plane2.D*plane1.x)
+            pz = 0
+            py = plane3.D/plane3.y
+            px1 = ((plane1.D - plane1.y*py)/plane1.x)
+            px2 = ((plane2.D - plane2.y*py)/plane2.x)
+            if px1 == px2:
+                print('hi')
+                #return Line((px1,py,pz), (dirVec.x,dirVec.y,dirVec.z), '3d')
+            else:
+                raise Exception('Something in the intersection of two planes broke...')
+            
+        if plane1.y != 0 and plane2.y != 0:
+            plane3 = Plane(plane1.x*plane2.y - plane2.x*plane1.y, plane1.y*plane2.y - plane2.y*plane1.y, plane1.z*plane2.y - plane2.z*plane1.y, plane1.D*plane2.y - plane2.D*plane1.y)
+            pz = 0
+            px = plane3.D/plane3.x
+            py1 = ((plane1.D - plane1.x*px)/plane1.y)
+            py2 = ((plane2.D - plane2.x*px)/plane2.y)
+            print(py1,py2)
+            if py1 == py2:
+                print('hi')
+                return Line((px,py1,pz), (dirVec.x,dirVec.y,dirVec.z), '3d')
+            else:
+                raise Exception('Something in the intersection of two planes broke...')
+
+        if plane1.z != 0 and plane2.z != 0:
+            plane3 = Plane(plane1.x*plane2.z - plane2.x*plane1.z, plane1.y*plane2.z - plane2.y*plane1.z, plane1.z*plane2.z - plane2.z*plane1.z, plane1.D*plane2.z - plane2.D*plane1.z)
+            py = 0
+            px = plane3.D/plane3.x
+            pz1 = ((plane1.D - plane1.x*px)/plane1.z)
+            pz2 = ((plane2.D - plane2.x*px)/plane2.z)
+            if pz1 == pz2:
+                print('hi')
+                return Line((px,py,pz1), (dirVec.x,dirVec.y,dirVec.z), '3d')
+            else:
+                raise Exception('Something in the intersection of two planes broke...')
 
 #3 Planes
 
