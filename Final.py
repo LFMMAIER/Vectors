@@ -14,15 +14,15 @@ class Vector():
         return str(self.vec)
 
     def reduce(self):
-        num = 2
         top = max(abs(self.x),abs(self.y),abs(self.z))
-        while num <= top:
-            if self.x%num == 0 and self.y%num == 0 and self.z%num == 0:
-                self.x = self.x//num
-                self.y = self.y//num
-                self.z = self.z//num
-                return (self.x,self.y,self.z)
-            num += 1
+        while top != 1:
+            #print (top)
+            #print (self.x%top == 0 and self.y%top == 0 and self.z%top == 0)
+            if self.x%top == 0 and self.y%top == 0 and self.z%top == 0:
+                self.x = self.x//top
+                self.y = self.y//top
+                self.z = self.z//top
+            top -= 1
         return (self.x,self.y,self.z)
 
 #Simple point class for management
@@ -187,7 +187,7 @@ class Line():
             return normal
         else:
             return 'undefined'
-    
+
     #returns the equation that is wanted
     #
     #type:
@@ -203,8 +203,23 @@ class Line():
                 return str(self.point.x)+' + '+str(self.dirVector.x)+'t',str(self.point.y)+' + '+str(self.dirVector.y)+'t'
             elif typee == 'Sclar':
                 #print (self.normal)
-                c = (self.point.x*self.normal.x + self.point.y*self.normal.y)
-                return str(self.normal.x)+'x'+' + '+str(self.normal.y)+'y = '+str(c)
+                c = '='+str(self.point.x*self.normal.x + self.point.y*self.normal.y)
+                #if staments to format equaitons
+                eqx = str(self.normal.x)+'x'
+                eqy = '+'+str(self.normal.y)+'y'
+                if self.normal.x == 1 or self.normal.x == -1:
+                    if self.normal.y < 0:
+                        eqx = '-x'
+                    else:
+                        eqx = 'x'
+                if self.normal.y < 0:
+                    eqy = ' - '+str(abs(self.normal.y))+'y'
+                if self.normal.y == 1 or self.normal.y == -1:
+                    if self.normal.y < 0:
+                        eqy = '-y'
+                    else:
+                        eqy = '+y'
+                return eqx+eqy+c
         if self.space == '3d':
             if typee == 'Vector':
                 return '(x,y,z) = '+str(self.point.point)+' + t'+str(self.dirVector.vec)
@@ -212,7 +227,22 @@ class Line():
                 return str(self.point.x)+' + '+str(self.dirVector.x)+'t',str(self.point.y)+' + '+str(self.dirVector.y)+'t',str(self.point.z)+' + '+str(self.dirVector.z)+'t'
             elif typee == 'Sclar':
                 return 'does not Exist'
+            
+#class for specialty lines
+class straightLine():
+    #xory is a variable it tell the class if it is a horazantial or vertical line
+    # either 'x' or 'y'
+    def __init__(self,value,xory):
+        self.value = value
+        self.xory = xory
+        self.space = '2d'
 
+    def equation(self):
+        if self.xory == 'x':
+            return 'x = '+str(self.value)
+        if self.xory == 'y':
+            return 'y = '+str(self.value)
+        
 class Plane():
     
     #Define a plane using its cartisian equation
@@ -236,17 +266,49 @@ class Plane():
     def equation(self):
         return str(self.x)+'x'+' + '+str(self.y)+'y + '+str(self.z)+'z = '+str(self.D)
 
+#creates a picture box class that displays differnd types of interctions With static Atributes
 
-p = Point(1,2,3)
-pi = Plane(4,2,-1,8)
-l = Line((3,1,2),(1,-4,-8),'3d')
+class vectordiagram():
 
-#print(pi.equation())
-#print(isPointPlane(p,pi))
-#print(linePlane(l,pi))
+    def __init__(self,cords):
+        self.rect = (cords[0],cords[1],575,450)
+
+    @staticmethod
+    def drawrect(surface,rect):
+        pygame.draw.rect(surface,(0,0,0),rect, 2)
 
 
-pi1 = Plane(2,-1,3,-2)
-pi2 = Plane(1,0,-3,1)
+    #Types of Outcomes
+    #lines in R3
+    # 'LiesInterscetAtAPointR3'
+    # 'LinesAreCoincidentR3'
+    # 'LinesAreParallelR3'
+    # 'LinesAreSkewedR3'
+    # 'Lines And Planes'
+    # 'LineIntersectionWithAPlane'
+    # 'LineLiesOnThePlane'
+    # 'LineParrallelToPlane'
+    #2 Planes
+    # '2PlanesAreCoincident'
+    # '2PlanesAreParrallel'
+    # '2PlanesIntersectAtALine'
+    #3 Planes
+    # '2PlanesAreCoincidentAndIntersectAThirdPlane'
+    # '2PlanesCoincidentAnd1Parallel'
+    # '2PlanesThatAreParallelAndIntersectAThirdPlane'
+    # '3PlanesCoincident'
+    # '3PlanesIntersectandMakeAPrisim'
+    # '3PlanesIntersectAtALine'
+    # '3PlanesIntersectAtAPoint'
+    # '3PlanesParallel'
 
-print(twoPlanes(pi1,pi2))
+    def display(self,surface,type):
+
+        if type == None:
+            vectordiagram.drawrect(surface,self.rect)
+        else:
+            vectordiagram.drawrect(surface,self.rect)
+            diagram = pygame.image.load(type +'.png')
+            #Centering the image
+            offset = ((self.rect[2]-diagram.get_width())/2,(self.rect[3]-diagram.get_height())/2)
+            surface.blit(diagram, (self.rect[0]+offset[0], self.rect[1]+offset[1]))
