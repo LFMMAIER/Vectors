@@ -92,6 +92,7 @@ def twoPlanes(plane1,plane2):
 
         if plane1.x != 0 and plane2.x != 0:
             plane3 = Plane(plane1.x*plane2.x - plane2.x*plane1.x, plane1.y*plane2.x - plane2.y*plane1.x, plane1.z*plane2.x - plane2.z*plane1.x, plane1.D*plane2.x - plane2.D*plane1.x)
+            print(plane3)
             pz = 0
             py = plane3.D/plane3.y
             px1 = ((plane1.D - plane1.y*py)/plane1.x)
@@ -117,10 +118,13 @@ def twoPlanes(plane1,plane2):
 
         if plane1.z != 0 and plane2.z != 0:
             plane3 = Plane(plane1.x*plane2.z - plane2.x*plane1.z, plane1.y*plane2.z - plane2.y*plane1.z, plane1.z*plane2.z - plane2.z*plane1.z, plane1.D*plane2.z - plane2.D*plane1.z)
+            print(3)
             py = 0
             px = plane3.D/plane3.x
             pz1 = ((plane1.D - plane1.x*px)/plane1.z)
             pz2 = ((plane2.D - plane2.x*px)/plane2.z)
+            print(pz1,pz2)
+            print(math.isclose(pz1,pz2))
             if pz1 == pz2:
                 print('hi')
                 return Line((px,py,pz1), (dirVec.x,dirVec.y,dirVec.z), '3d')
@@ -242,7 +246,7 @@ l = Line((3,1,2),(1,-4,-8),'3d')
 #print(linePlane(l,pi))
 
 
-pi1 = Plane(1,2,1,4)
-pi2 = Plane(2,1,-1,5)
+pi1 = Plane(2,-1,3,-2)
+pi2 = Plane(1,0,-3,1)
 
 print(twoPlanes(pi1,pi2))
