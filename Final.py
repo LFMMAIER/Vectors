@@ -133,7 +133,10 @@ def twoPlanes(plane1,plane2):
 
 #3 Planes
 
-#def threePlanes(plane1,plane2,plane3):
+def threePlanes(plane1,plane2,plane3):
+    if plane1.equation() == plane2.equation() and plane1.equation == plane3.equation:
+        return plane1
+    elif 
 
 # Plane and a line
 
@@ -312,3 +315,18 @@ class vectordiagram():
             #Centering the image
             offset = ((self.rect[2]-diagram.get_width())/2,(self.rect[3]-diagram.get_height())/2)
             surface.blit(diagram, (self.rect[0]+offset[0], self.rect[1]+offset[1]))
+
+p = Point(1,2,3)
+pi = Plane(4,2,-1,8)
+l = Line((3,1,2),(1,-4,-8),'3d')
+
+#print(pi.equation())
+#print(isPointPlane(p,pi))
+#print(linePlane(l,pi))
+
+
+pi1 = Plane(2,-1,3,-2)
+pi2 = Plane(1,0,-3,1)
+
+print(twoPlanes(pi1,pi2))
+            
