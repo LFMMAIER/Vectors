@@ -30,6 +30,7 @@ class Button(object):
 
     #method for click detection on the button
     def clicked(self,m):
+
         x = m[0]
         y = m[1]
         if x >= self.postion[0] and y >= self.postion[1] and x <= self.postion[0] + self.width and y <= self.postion[1] + self.height:
@@ -54,7 +55,7 @@ class Lable(object):
 
     #rect (x,y,w,h)
 
-    def __init__(self,rect,word='',bordor=False,fill=(0,0,0),font='Arial',fsize=16,fontC=(0,0,0)):
+    def __init__(self,rect,word,bordor=False,fill=(0,0,0),font='Arial',fsize=16,fontC=(0,0,0)):
 
         self.rect = rect
         self.word = word
@@ -73,13 +74,13 @@ class Lable(object):
         buttonfont = pygame.font.SysFont(self.font, self.Fsize)
         drawFont = buttonfont.render(self.word,True,self.fontC)
         offset = ((self.rect[2]-drawFont.get_width())/2,(self.rect[3]-drawFont.get_height())/2)
-        surface.blit(drawFont, (self.rect[0]+offset[0], self.rect[1]+offset[1]))  
+        surface.blit(drawFont, (self.rect[0]+offset[0], self.rect[1]+offset[1]))
 
     #Geter Methods for the lables atrbutes
-    def LablePos(self): 
-        return (self.rect[0],self.rect[1]) 
+    def LablePos(self):
+        return (self.rect[0],self.rect[1])
     def Dementions(self):
-        return (self.rect[2],self.rect[3]) 
+        return (self.rect[2],self.rect[3])
     def changeC(self,c):
         self.fill = c
     def getLable(self):
