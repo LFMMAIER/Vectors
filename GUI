@@ -7,41 +7,94 @@ from VectorClass import *
 pygame.init()
 buttonOnfill = (255,69,8)
 
+#create a constant to deter if an equation is a line
+linetype = type(Line((1,1,1),(1,1,1),'3d'))
+planetype = type(Plane(1,1,1,1))
+striaghtline = type(straightLine(1,'x'))
+
 #Main Function
 def redraw_win():
     win.fill((255,255,255))
     title.draw(win)
     title2.draw(win)
+    title3.draw(win)
+    title4.draw(win)
     #Drawing plane inputboxs
     if vectorbutton.fill == buttonOnfill:
         planePoint.draw(win)
         planeVec1.draw(win)
         planeVec2.draw(win)
+        #Draw plane Lables
+        PointLablePlane.draw(win)
+        DirctionVectorLablePlane.draw(win)
+        DirctionVectorLablePlane2.draw(win)
     if cartianbutton.fill == buttonOnfill:
+        CartisianinputboxLablePlane.draw(win)
         planeCartisan.draw(win)
     #Drawing Line inputboxs
     LinePoint.draw(win)
     LineVec1.draw(win)
-    #Line Buttons
+    HorzantialInput.display_box(win)
+    VerticalInput.display_box(win)
+    #Draw Line Lables
+    DirctionVectorLableline.draw(win)
+    PointLableline.draw(win)
+    HorazantialLine.draw(win)
+    VerticalLines.draw(win)
+    #Draw Debug window
+    DebugwinLable.draw(win)
+    Debugwin.draw(win)
+    #Draw Answer window
+    AnswerwinLable.draw(win)
+    Answerwin.draw(win)
+    #Draw Line Buttons
     r3button.draw(win)
     r2button.draw(win)
     #Draw buttons
     addline.draw(win)
     addplane.draw(win)
+    addHorazantialLine.draw(win)
+    addVerticalLine.draw(win)
     delete.draw(win)
+    solve.draw(win)
+    saveEq.draw(win)
+    recover.draw(win)
     cartianbutton.draw(win)
     vectorbutton.draw(win)
 
+    diagram.display(win,'LinesAreSkewedR3')
+
     EquationsSelect.draw(win)
-    
+
     pygame.display.update()
 
+#File IO
+def readEQfile(file):
+    savedEquations = [line.strip() for line in file.readlines()]
+    #print (savedEquations)
+    listeq = []
+    current = []
+    for eqs in savedEquations:
+        current = eqs.split(' ')
+        if current[0] == 'Plane':
+            listeq.append(Plane(int(current[1]),int(current[2]),int(current[3]),int(current[4])))
+        elif current[0] == 'Line':
+            listeq.append(Line((int(current[1]),int(current[2]),int(current[3])),(int(current[4]),int(current[5]),int(current[6])),current[7]))
+        elif current[0] == 'StraightLine':
+            listeq.append(straightLine(int(current[1]),current[2]))
+    return listeq
 
-#win = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-win = pygame.display.set_mode((1200,1200))
+SavedEquationsfile = open("SavedEquationsfile.txt")
+SavedAnswersfile = open('SavedAnswersfile.txt','w')
+savedEquationslist = readEQfile(SavedEquationsfile)
+
+win = pygame.display.set_mode((1650,800))
+
+#Titles
 title = Lable((100,50,250,70),'LINE',True,fsize=50)
 title2 = Lable((400,50,250,70),'PLANE',True,fsize=50)
-#x = inputbox("x: ",(200,300,250,40),(255,255,255),(0,0,0),(0,0,0))
+title3 = Lable((700,50,250,70),'EQUATIONS',True,fsize=50)
+title4 = Lable((1000,50,575,70),'SOLUTIONS AND DIAGRAMS',True,fsize=50)
 
 #inputboxes for planes
 planePoint = Textboxgird(1,3,(400,150,250,25),['x:','y:','z:'],thinkness=2,fsize=24)
@@ -52,42 +105,95 @@ planeCartisan = Textboxgird(4,1,(400,150,250,140),['x:','y:','z:','D:'],thinknes
 #inputboxes for lines
 LinePoint = Textboxgird(1,2,(100,150,250,25),['x:','y:'],thinkness=2,fsize=24)
 LineVec1 = Textboxgird(1,2,(100,210,250,25),['x:','y:'],thinkness=2,fsize=24)
+HorzantialInput = inputbox('y:',(100,320,250,25),(255,255,255),(0,0,0),(0,0,0))
+VerticalInput = inputbox('x:',(100,420,250,25),(255,255,255),(0,0,0),(0,0,0))
 #R3 to R2 changing Button
 r3button = Button((40,80,50,25),(0,0,0),'R3',fsize=24)
 r2button = Button((40,50,50,25),(0,0,0),'R2',fsize=24,fill=buttonOnfill)
 
+#equation selector
+EquationsSelect = equationslector(12,(700,130,250,400),[],gap=1,sfill=buttonOnfill)
 
-EquationsSelect = equationslector(12,(700,50,250,400),[],gap=1,sfill=buttonOnfill)
+#Answer Boxes
+diagram = vectordiagram((1000,125))
+AnswerDiagram = None
 
+#Lables Line
+DirctionVectorLableline = Lable((100,180,250,25),'Direction Vector',fsize=24)
+PointLableline = Lable((100,125,250,25),'Point',fsize=24)
+HorazantialLine = Lable((100,290,250,25),'Horazantial Line',fsize=24)
+VerticalLines = Lable((100,390,250,25),'Vertical Line',fsize=24)
+
+#Plane txtbox Lables
+PointLablePlane = Lable((400,125,250,25),'Point',fsize=24)
+DirctionVectorLablePlane = Lable((400,175,250,25),'Direction Vector 1',fsize=24)
+DirctionVectorLablePlane2 = Lable((400,230,250,25),'Direction Vector 2',fsize=24)
+CartisianinputboxLablePlane = Lable((400,125,250,25),'Cartesian Equation',fsize=24)
+
+#Debug window
+DebugwinLable = Lable((400,400,250,25),'Debug Window',fsize=28)
+Debugwin = Lable((400,430,250,100),'',True,fsize=20)
+
+#Answer window
+AnswerwinLable = Lable((1000,580,575,25),'Answer Window',fsize=28)
+Answerwin = Lable((1000,610,575,100),'',True,fsize=20)
+
+
+#buttons
 addline = Button((300,240,50,25),(0,0,0),'add',fsize=24)
+addHorazantialLine = Button((300,350,50,25),(0,0,0),'add',fsize=24)
+addVerticalLine = Button((300,450,50,25),(0,0,0),'add',fsize=24)
 addplane = Button((590,300,50,25),(0,0,0),'add',fsize=24)
-cartianbutton = Button((405,300,100,25),(0,0,0),'Cartesian',fsize=24)
-vectorbutton = Button((510,300,75,25),(0,0,0),'Vector',fsize=24,fill=buttonOnfill)
-delete = Button((775,460,175,25),(0,0,0),'Delete Selected',fsize=24)
+addstraightline = Button((590,300,50,25),(0,0,0),'add',fsize=24)
+cartianbutton = Button((405,300,100,25),(0,0,0),'Cartesian',fsize=24,fill=buttonOnfill)
+vectorbutton = Button((510,300,75,25),(0,0,0),'Vector',fsize=24)
+solve = Button((700,540,250,25),(0,0,0),'Solve Selected',fsize=24)
+delete = Button((700,570,250,25),(0,0,0),'Delete Selected',fsize=24)
+saveEq = Button((700,600,250,25),(0,0,0),'Save Equations',fsize=24)
+recover = Button((700,630,250,25),(0,0,0),'Recover Equations',fsize=24)
+saveAns = Button((775,540,175,25),(0,0,0),'Save Answer',fsize=24)
 
-
-On = True                                     
+On = True
 while On:
     redraw_win()
-    pygame.time.delay(10)              
+    pygame.time.delay(10)
 
-    for event in pygame.event.get():    
-        if event.type == pygame.QUIT:   
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
             On = False
-         
-        if event.type == pygame.KEYDOWN:       
-            if event.key == pygame.K_ESCAPE:    
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
                 On = False
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             clickPos = pygame.mouse.get_pos()
+            Debugwin.changeLable('')
 
-            if addplane.clicked(clickPos):
-                #values = planeCartisan.givevals()
-                #EquationsSelect.addEquaton(Plane(values[0],values[1],values[2],values[3]))
-            
             if delete.clicked(clickPos):
                 EquationsSelect.removeSelected()
+
+            if recover.clicked(clickPos):
+                EquationsSelect.OpenEquations(savedEquationslist[:])
+
+            if saveEq.clicked(clickPos):
+                EquationstoSave = EquationsSelect.GiveEquations()
+                if EquationstoSave != []:
+                    filestr = []
+                    #createing a str to repsent an equations
+                    for eqs in EquationstoSave:
+                        if type(eqs) == planetype:
+                            filestr.append('Plane '+str(eqs.x)+' '+str(eqs.y)+' '+str(eqs.z)+' '+str(eqs.D))
+                        elif type(eqs) == linetype:
+                            filestr.append('Line '+str(eqs.point.x)+' '+str(eqs.point.y)+' '+str(eqs.point.z)+' '+str(eqs.dirVector.x)+' '+str(eqs.dirVector.y)+' '+str(eqs.dirVector.z)+' '+eqs.space)
+                        elif type(eqs) == striaghtline:
+                            filestr.append('StraightLine '+str(eqs.value)+' '+eqs.xory)
+
+                    SavedEquationsfile = open("SavedEquationsfile.txt",'w')
+                    SavedEquationsfile.writelines('\n'.join(filestr))
+                    SavedEquationsfile = open("SavedEquationsfile.txt")
+                    savedEquationslist = readEQfile(SavedEquationsfile)
+
 
             if r3button.clicked(clickPos):
                 r2button.fill = (0,0,0)
@@ -109,7 +215,7 @@ while On:
             if vectorbutton.clicked(clickPos):
                 vectorbutton.fill = buttonOnfill
                 cartianbutton.fill = (0,0,0)
-            
+
 
             #Check inputbox dectction
             #print(vectorbutton.fill,cartianbutton.fill,buttonOnfill)
@@ -117,13 +223,104 @@ while On:
                 planePoint.clickedBox(clickPos,win)
                 planeVec1.clickedBox(clickPos,win)
                 planeVec2.clickedBox(clickPos,win)
-            if cartianbutton.fill == buttonOnfill:
+                if addplane.clicked(clickPos):
+                    #retrive values
+                    Pointvalues = planePoint.givevals()
+                    vec1values = planeVec1.givevals()
+                    vec2values = planeVec2.givevals()
+
+                    if None in Pointvalues or None in vec1values or  None in vec2values:
+                        Debugwin.changeLable('Invalid Equation')
+                    else:
+                        #find the planes x,y,z,D values from vector form
+                        xyzvalues = cross(Vector(vec1values[0],vec1values[1],vec1values[2]),Vector(vec2values[0],vec2values[1],vec2values[2]))
+                        Dvalue = Pointvalues[0]*xyzvalues.x + Pointvalues[1]*xyzvalues.y + Pointvalues[2]*xyzvalues.z
+                        EquationsSelect.addEquaton(Plane(xyzvalues.x,xyzvalues.y,xyzvalues.z,Dvalue))
+                        #Clears Values
+                        planePoint.clear()
+                        planeVec1.clear()
+                        planeVec2.clear()
+
+            elif cartianbutton.fill == buttonOnfill:
                 planeCartisan.clickedBox(clickPos,win)
+                if addplane.clicked(clickPos):
+                    Cvalues = planeCartisan.givevals()
+                    if None in Cvalues:
+                        Debugwin.changeLable('Invalid Equation')
+                    elif Cvalues[:3].count(0) > 1:
+                        Debugwin.changeLable('Only one of x,y,z can be 0')
+                    else:
+                        EquationsSelect.addEquaton(Plane(Cvalues[0],Cvalues[1],Cvalues[2],Cvalues[3]))
+                    #Clears Values
+                    planeCartisan.clear()
+
+            #Line TextBoxes
             LinePoint.clickedBox(clickPos,win)
             LineVec1.clickedBox(clickPos,win)
+
+            #Horazantial lines
+            if HorzantialInput.clicked(clickPos):
+                HorzantialInput.ask(win)
+            if addHorazantialLine.clicked(clickPos):
+                HLineValue = HorzantialInput.giveval()
+                if HLineValue == None:
+                    Debugwin.changeLable('Invalid Equation')
+                else:
+                    EquationsSelect.addEquaton(straightLine(HLineValue,'y'))
+                HorzantialInput.clear()
+
+            #Vertical lines
+            if VerticalInput.clicked(clickPos):
+                VerticalInput.ask(win)
+            if addVerticalLine.clicked(clickPos):
+                VLineValue = VerticalInput.giveval()
+                if VLineValue == None:
+                    Debugwin.changeLable('Invalid Equation')
+                else:
+                    EquationsSelect.addEquaton(straightLine(VLineValue,'x'))
+                VerticalInput.clear()
+
+            #lines in R2
+            if r2button.fill == buttonOnfill:
+                if addline.clicked(clickPos):
+                    PointvaluesLine = LinePoint.givevals()
+                    vecvaluesLine = LineVec1.givevals()
+                    if None in PointvaluesLine or None in vecvaluesLine:
+                         Debugwin.changeLable('Invalid Equation')
+                    elif 0 in vecvaluesLine:
+                        Debugwin.changeLable('0 entered in Direction Vector')
+                    else:
+                        EquationsSelect.addEquaton(Line(PointvaluesLine,vecvaluesLine,'2d'))
+                    #Clears Values
+                    LinePoint.clear()
+                    LineVec1.clear()
+            elif r3button.fill == buttonOnfill:
+                if addline.clicked(clickPos):
+                    PointvaluesLine = LinePoint.givevals()
+                    vecvaluesLine = LineVec1.givevals()
+                    if None in PointvaluesLine or None in vecvaluesLine:
+                        Debugwin.changeLable('Invalid Equation')
+                    else:
+                        EquationsSelect.addEquaton(Line(PointvaluesLine,vecvaluesLine,'3d'))
+                    #Clears Values
+                    LinePoint.clear()
+                    LineVec1.clear()
 
             #Equation Selector
             EquationsSelect.select(clickPos)
 
-                                    
-pygame.quit()                           
+        if event.type == pygame.MOUSEMOTION:
+            mp = pygame.mouse.get_pos()
+            delete.hover(mp,buttonOnfill,(0,0,0),3,1)
+            solve.hover(mp,buttonOnfill,(0,0,0),3,1)
+            saveEq.hover(mp,buttonOnfill,(0,0,0),3,1)
+            recover.hover(mp,buttonOnfill,(0,0,0),3,1)
+            addline.hover(mp,buttonOnfill,(0,0,0),3,1)
+            addplane.hover(mp,buttonOnfill,(0,0,0),3,1)
+            addHorazantialLine.hover(mp,buttonOnfill,(0,0,0),3,1)
+            addVerticalLine.hover(mp,buttonOnfill,(0,0,0),3,1)
+
+
+
+
+pygame.quit()
