@@ -1,6 +1,13 @@
 # A simple module to get user input allowing for backspace but not arrow keys or delete key
+# Parameters/Arguments:
+#   screen => window to draw the inputbox on
+#   self.question => prompt for the user
+#   self.rect => a self.rectangle giving the position and size of the inputbox
+# options parameters
+#   self.backClr=BACKGROUND_COLOR, textClr=TEXT_COLOR, self.borderClr=BORDER_COLOR
 # Called by:
 # from inputbox import *
+# userInput = ask(win,prompt,self.rect)
 # Font size and type are defined by constants could add these later as parameters
 # Constants are used to define the default values for the optional parameters so you can change this
 # Creidt to Mr Jones
@@ -32,6 +39,7 @@ class inputbox(object):
     self.backClr = backClr
     self.textClr = textClr
     self.borderClr = borderClr
+    self.borderthickness = 1
     self.value = ''
     self.text = self.question + self.value
   
@@ -46,7 +54,7 @@ class inputbox(object):
         self.value = self.value[0:-1]
         self.text = self.question + self.value
     pygame.draw.rect(screen, self.backClr, self.rect, 0)
-    pygame.draw.rect(screen, self.borderClr, self.rect, 1)
+    pygame.draw.rect(screen, self.borderClr, self.rect, self.borderthickness)
     if len(self.text) != 0:
       yOffSet = (self.rect[3] - message_surface.get_height()) // 2 + 1    # vertically centre the text in the input box
       screen.blit(message_surface, (self.rect[0]+TEXT_INDENT,self.rect[1]+yOffSet))
@@ -56,7 +64,7 @@ class inputbox(object):
     if self.value != '':
       return -1*int(self.value[1:]) if self.value[0] == '-' else int(self.value)
     else:
-      return 0
+      return None
 
   def clear(self):
     self.value = ''
@@ -74,8 +82,10 @@ class inputbox(object):
     global VALID_KEYS
     "ask(screen, self.question) -> answer"
     pygame.font.init()
-    inputbox.display_box(self,screen)
     enteringText = True
+    orginalthickness = self.borderthickness
+    self.borderthickness = 5
+    inputbox.display_box(self,screen)
     while enteringText:
       for event in pygame.event.get():
         if event.type == pygame.KEYDOWN:
@@ -91,8 +101,9 @@ class inputbox(object):
         if event.type == pygame.MOUSEBUTTONDOWN:
           clickPos = pygame.mouse.get_pos()
           if inputbox.clicked(self,clickPos) == False:
-            enteringText = False       
-
-        
+            enteringText = False
+      
+      self.borderthickness = orginalthickness
       inputbox.display_box(self,screen)
       pygame.display.flip()
+
