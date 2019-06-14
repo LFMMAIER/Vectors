@@ -49,16 +49,21 @@ def cross(vec1,vec2):
 def dot(vec1,vec2):
     if type(vec1) != Vector or type(vec2) != Vector:
         raise Exception('You tried to dot a non vector')
-    return vec1.x*vec2.x + vec1.y*vec2.y + vec1.z*vec2.z    
+    return vec1.x*vec2.x + vec1.y*vec2.y + vec1.z*vec2.z
+
+#Triple Scalar
+
+def tripleScalar(vec1,vec2,vce3):
+    return dot(vec1,cross(vec2,vec3))
     
 #2 Planes
 
 def twoPlanes(plane1,plane2):
-    if plane1.normal == plane2.normal:
+    if plane1.normal.vec == plane2.normal.vec:
         if plane1.equation() == plane2.equation():
             return plane1
         else:
-            return None
+            return 'DNE'
     else:
 ##        if plane1.x != 0 and plane2.x != 0:
 ##            plane3 = Plane(plane1.x*plane2.x - plane2.x*plane1.x, plane1.y*plane2.x - plane2.y*plane1.x, plane1.z*plane2.x - plane2.z*plane1.x, plane1.D*plane2.x - plane2.D*plane1.x)
@@ -92,14 +97,14 @@ def twoPlanes(plane1,plane2):
 
         if plane1.x != 0 and plane2.x != 0:
             plane3 = Plane(plane1.x*plane2.x - plane2.x*plane1.x, plane1.y*plane2.x - plane2.y*plane1.x, plane1.z*plane2.x - plane2.z*plane1.x, plane1.D*plane2.x - plane2.D*plane1.x)
-            print(plane3)
+            #print(plane3)
             pz = 0
             py = plane3.D/plane3.y
             px1 = ((plane1.D - plane1.y*py)/plane1.x)
             px2 = ((plane2.D - plane2.y*py)/plane2.x)
             if px1 == px2:
-                print('hi')
-                #return Line((px1,py,pz), (dirVec.x,dirVec.y,dirVec.z), '3d')
+                #print('hi')
+                return Line((px1,py,pz), (dirVec.x,dirVec.y,dirVec.z), '3d')
             else:
                 raise Exception('Something in the intersection of two planes broke...')
             
@@ -109,9 +114,9 @@ def twoPlanes(plane1,plane2):
             px = plane3.D/plane3.x
             py1 = ((plane1.D - plane1.x*px)/plane1.y)
             py2 = ((plane2.D - plane2.x*px)/plane2.y)
-            print(py1,py2)
+            #print(py1,py2)
             if py1 == py2:
-                print('hi')
+                #print('hi')
                 return Line((px,py1,pz), (dirVec.x,dirVec.y,dirVec.z), '3d')
             else:
                 raise Exception('Something in the intersection of two planes broke...')
@@ -123,10 +128,10 @@ def twoPlanes(plane1,plane2):
             px = plane3.D/plane3.x
             pz1 = ((plane1.D - plane1.x*px)/plane1.z)
             pz2 = ((plane2.D - plane2.x*px)/plane2.z)
-            print(pz1,pz2)
-            print(math.isclose(pz1,pz2))
+            #print(pz1,pz2)
+            #print(math.isclose(pz1,pz2))
             if pz1 == pz2:
-                print('hi')
+                #print('hi')
                 return Line((px,py,pz1), (dirVec.x,dirVec.y,dirVec.z), '3d')
             else:
                 raise Exception('Something in the intersection of two planes broke...')
@@ -134,10 +139,27 @@ def twoPlanes(plane1,plane2):
 #3 Planes
 
 def threePlanes(plane1,plane2,plane3):
+    ans = None
+    
+    #If the planes are coincident
     if plane1.equation() == plane2.equation() and plane1.equation == plane3.equation:
         return plane1
-    elif 
+    
+    #If two planes are coicident and possibly intersect a third
+    if type(twoPlanes(plane1,plane2)) == Plane or type(twoPlanes(plane3,plane2)) == Plane or type(twoPlanes(plane1,plane3)) == Plane:
+        return twoPlanes(twoPlanes(plane1,plane2),plane3)
 
+    #If twoPlanes intersect at a line
+    if type(twoPlanes(plane1,plane2)) == Line:
+        ans = linePlane(twoPlanes(plane1,plane2),plane3)
+    elif type(twoPlanes(plane2,plane3)) == Line:
+        ans = linePlane(twoPlanes(plane2,plane3),plane1)
+    elif type(twoPlanes(plane1,plane3)) == Line:
+        ans = linePlane(twoPlanes(plane1,plane3),plane2)
+
+    if type(ans) == str:
+        return (ans,
+        
 # Plane and a line
 
 def linePlane(line1,plane1):
@@ -145,7 +167,7 @@ def linePlane(line1,plane1):
         if isPointPlane(line1.point,plane1):
             return line1
         else:
-            return None
+            return 'DNE'
     else:
         ls = plane1.normal.x* line1.point.x + plane1.normal.y* line1.point.y + plane1.normal.z* line1.point.z
         rs = plane1.normal.x* line1.dirVector.x + plane1.normal.y* line1.dirVector.y + plane1.normal.z* line1.dirVector.z + plane1.D
@@ -206,12 +228,12 @@ class Line():
                 return str(self.point.x)+' + '+str(self.dirVector.x)+'t',str(self.point.y)+' + '+str(self.dirVector.y)+'t'
             elif typee == 'Sclar':
                 #print (self.normal)
-                c = ' = '+str(self.point.x*self.normal.x + self.point.y*self.normal.y)
+                c = '='+str(self.point.x*self.normal.x + self.point.y*self.normal.y)
                 #if staments to format equaitons
                 eqx = str(self.normal.x)+'x'
                 eqy = '+'+str(self.normal.y)+'y'
                 if self.normal.x == 1 or self.normal.x == -1:
-                    if self.normal.x < 0:
+                    if self.normal.y < 0:
                         eqx = '-x'
                     else:
                         eqx = 'x'
@@ -219,9 +241,9 @@ class Line():
                     eqy = ' - '+str(abs(self.normal.y))+'y'
                 if self.normal.y == 1 or self.normal.y == -1:
                     if self.normal.y < 0:
-                        eqy = ' - y'
+                        eqy = '-y'
                     else:
-                        eqy = ' + y'
+                        eqy = '+y'
                 return eqx+eqy+c
         if self.space == '3d':
             if typee == 'Vector':
@@ -230,7 +252,7 @@ class Line():
                 return str(self.point.x)+' + '+str(self.dirVector.x)+'t',str(self.point.y)+' + '+str(self.dirVector.y)+'t',str(self.point.z)+' + '+str(self.dirVector.z)+'t'
             elif typee == 'Sclar':
                 return 'does not Exist'
-
+            
 #class for specialty lines
 class straightLine():
     #xory is a variable it tell the class if it is a horazantial or vertical line
@@ -245,12 +267,9 @@ class straightLine():
             return 'x = '+str(self.value)
         if self.xory == 'y':
             return 'y = '+str(self.value)
-
-
-
-
+        
 class Plane():
-
+    
     #Define a plane using its cartisian equation
     def __init__(self,x,y,z,D):
 
@@ -263,39 +282,14 @@ class Plane():
     def __str__(self):
         return self.equation()
 
-
+        
 ##        self.point = Point(point[0],point[1],point[2])
 ##        self.dirVector1 = Vector(dirVector1[0],dirVector1[1],dirVector1[2])
 ##        self.dirVector2 = Vector(dirVector2[0],dirVector2[1],dirVector2[2])
 ##        self.c = (point[0]*self.normal.x + point[1]*self.normal.y + point[2]*self.normal.z)
 
     def equation(self):
-        #algorim to dispaly the equations properly wiht coffients of 1 as x,y,z and replaceing '+' with '-' when a coeffecnt is negitive
-        eqD = ' = '+str(self.D)
-        eqx = str(self.x)+'x'
-        eqy = ' + '+str(self.y)+'y'
-        eqz = ' + '+str(self.z)+'z'
-        if self.x == 1 or self.x == -1:
-            if self.normal.x < 0:
-                eqx = '-x'
-            else:
-                eqx = 'x'
-        if self.y < 0:
-            eqy = ' - '+str(abs(self.y))+'y'
-        if self.y == 1 or self.y == -1:
-            if self.y < 0:
-                eqy = ' - y'
-            else:
-                eqy = ' + y'
-        if self.z < 0:
-            eqz = ' - '+str(abs(self.z))+'z'
-        if self.z == 1 or self.z == -1:
-            if self.z < 0:
-                eqz = ' - z'
-            else:
-                eqz = ' + z'
-        return eqx+eqy+eqz+eqD
-
+        return str(self.x)+'x'+' + '+str(self.y)+'y + '+str(self.z)+'z = '+str(self.D)
 
 #creates a picture box class that displays differnd types of interctions With static Atributes
 
@@ -310,10 +304,6 @@ class vectordiagram():
 
 
     #Types of Outcomes
-    #lines in R2
-    # 'LiesInterscetAtAPointR2'
-    # 'LinesAreCoincidentR2'
-    # 'LinesAreParallelR2'
     #lines in R3
     # 'LiesInterscetAtAPointR3'
     # 'LinesAreCoincidentR3'
@@ -348,5 +338,16 @@ class vectordiagram():
             offset = ((self.rect[2]-diagram.get_width())/2,(self.rect[3]-diagram.get_height())/2)
             surface.blit(diagram, (self.rect[0]+offset[0], self.rect[1]+offset[1]))
 
+p = Point(1,2,3)
+pi = Plane(4,2,-1,8)
+l = Line((3,1,2),(1,-4,-8),'3d')
 
-            
+#print(pi.equation())
+#print(isPointPlane(p,pi))
+#print(linePlane(l,pi))
+
+
+pi1 = Plane(2,-1,3,-2)
+pi2 = Plane(1,0,-3,1)
+
+print(twoPlanes(pi1,pi2))
