@@ -9,6 +9,7 @@ from VectorClass import *
 #create a constant to deter if an equation is a line
 linetype = type(Line((1,1,1),(1,1,1),'3d'))
 planetype = type(Plane(1,1,1,1))
+striaghtline = type(straightLine(1,'x'))
 
 
 class Grid(object):
@@ -45,13 +46,13 @@ class Grid(object):
     def draw(self,win,colour=(0,0,0)):
         # draws the grid of cells
         if self.bordor == True:
-            pygame.draw.rect(win,colour,self.rect,self.thinkness) 
+            pygame.draw.rect(win,colour,self.rect,self.thinkness)
         for i,crec in enumerate(self.cellCordinates):
             if i == self.currentCell:
                 pygame.draw.rect(win,(255,0,0),crec,self.thinkness)
             else:
                 pygame.draw.rect(win,colour,crec,self.thinkness)
-     
+
 #Menu Sub Class for creating Menus with buttons
 class Menu(Grid):
 
@@ -76,17 +77,17 @@ class Menu(Grid):
     def draw(self,win):
         # draws the grid of cells
         if self.bordor == True:
-            pygame.draw.rect(win,(0,0,0),self.rect,self.thinkness) 
+            pygame.draw.rect(win,(0,0,0),self.rect,self.thinkness)
         for Bcell in self.buttons:
             Bcell.draw(win)
-            
+
     def clickedCell(self,mp):
         #Checks what cell is clicked
         for i,Bcell in enumerate(self.buttons):
             if Bcell.clicked(mp) == True:
                 return (self.labels[i],True)
         return (None,False)
-    
+
     def OverCell(self,mp,Ncolor,Increase,Orignal):
         #checks witch cell the mouse is over
         for Bcell in self.buttons:
@@ -118,12 +119,18 @@ class Textboxgird(Grid):
         for txtcell in self.txtboxs:
             txtcell.display_box(win)
 
+    #Clears values
+    def clear(self):
+        # draws the grid of cells
+        for txtcell in self.txtboxs:
+            txtcell.clear()
+
     def givevals(self):
         vals = []
         for txtcell in self.txtboxs:
             vals.append(txtcell.giveval())
         return (vals)
-            
+
     def clickedBox(self,mp,win):
         #Checks what cell is clicked
         for i,txtcell in enumerate(self.txtboxs):
@@ -182,31 +189,32 @@ class equationslector(Grid):
                 if i in self.selected:
                     bcell.fill = (0,0,0)
                     self.selected.remove(i)
-                else:    
+                else:
                     self.selected.append(i)
-                #checks if the seceted cell is a line in 2 space
-                if type(self.Equations[i]) == linetype:
-                    if self.Equations[i].space == '2d':
-                         if len(self.selected) > 2:
-                            for n in self.selected:
-                                self.Equationsbuttons[n].fill = (0,0,0)
-                            self.selected = [i]
-                         if type(self.Equations[self.selected[0]]) == linetype:
-                             if self.Equations[self.selected[0]].space == '2d':
-                                 pass
+                #checks if the seceted cell is a line in 2 space striaghtline
+                if self.selected != []:
+                    if type(self.Equations[i]) == linetype or type(self.Equations[i]) == striaghtline:
+                        if self.Equations[i].space == '2d':
+                             if len(self.selected) > 2:
+                                for n in self.selected:
+                                    self.Equationsbuttons[n].fill = (0,0,0)
+                                self.selected = [i]
+                             if type(self.Equations[self.selected[0]]) == linetype or type(self.Equations[self.selected[0]]) == striaghtline:
+                                 if self.Equations[self.selected[0]].space == '2d':
+                                     pass
+                                 else:
+                                     self.selected = [i]
                              else:
                                  self.selected = [i]
-                         else:
-                             self.selected = [i]
 
             #string of if statments to only allow r2 equations with r2 equations
             if self.selected != []:
-                if type(self.Equations[self.selected[0]]) == linetype:
+                if type(self.Equations[self.selected[0]]) == linetype or type(self.Equations[self.selected[0]]) == striaghtline:
                     if self.Equations[self.selected[0]].space == '2d':
                         if len(self.selected) > 1:
                             if type(self.Equations[self.selected[-1]]) == planetype:
                                 self.selected = [self.selected[-1]]
-                            elif type(self.Equations[self.selected[-1]]) == linetype:
+                            elif type(self.Equations[self.selected[-1]]) == linetype or type(self.Equations[self.selected[-1]]) == striaghtline:
                                 if self.Equations[self.selected[-1]].space != '2d':
                                     self.selected = [self.selected[-1]]
 
@@ -236,6 +244,16 @@ class equationslector(Grid):
         self.selected = []
         self.Equationsbuttons = self.EquationsButtons()
 
+    #uploads equations
+    def OpenEquations(self,eqList):
+        self.Equations = eqList
+        self.selected = []
+        self.Equationsbuttons = self.EquationsButtons()
+
+    #Returns the Equations
+    def GiveEquations(self):
+        return self.Equations
+
     #return selected equations
     def reurnSelected(self):
         returing = []
@@ -254,16 +272,3 @@ class equationslector(Grid):
             self.Equations.remove(eq)
         self.selected = []
         self.Equationsbuttons = self.EquationsButtons()
-            
-
-        
-
-
-
-
-
-
-
-
-
-
