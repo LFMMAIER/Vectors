@@ -11,6 +11,7 @@ buttonOnfill = (255,69,8)
 linetype = type(Line((1,1,1),(1,1,1),'3d'))
 planetype = type(Plane(1,1,1,1))
 striaghtline = type(straightLine(1,'x'))
+pointype = type(Point(1,1,1))
 
 #Main Function
 def redraw_win():
@@ -62,7 +63,7 @@ def redraw_win():
     cartianbutton.draw(win)
     vectorbutton.draw(win)
 
-    diagram.display(win,'LinesAreSkewedR3')
+    diagram.display(win,AnswerDiagram)
 
     EquationsSelect.draw(win)
 
@@ -151,7 +152,6 @@ solve = Button((700,540,250,25),(0,0,0),'Solve Selected',fsize=24)
 delete = Button((700,570,250,25),(0,0,0),'Delete Selected',fsize=24)
 saveEq = Button((700,600,250,25),(0,0,0),'Save Equations',fsize=24)
 recover = Button((700,630,250,25),(0,0,0),'Recover Equations',fsize=24)
-saveAns = Button((775,540,175,25),(0,0,0),'Save Answer',fsize=24)
 
 On = True
 while On:
@@ -193,6 +193,45 @@ while On:
                     SavedEquationsfile.writelines('\n'.join(filestr))
                     SavedEquationsfile = open("SavedEquationsfile.txt")
                     savedEquationslist = readEQfile(SavedEquationsfile)
+
+            #Code for determining what to use to solve the equations
+            if solve.clicked(clickPos):
+                EqsToSolve = EquationsSelect.reurnSelected()
+                numoflines = sum([1 for n in EqsToSolve if type(n) == linetype])
+                numofPlanes = sum([1 for n in EqsToSolve if type(n) == planetype])
+                if numoflines == 1 and numofPlanes == 1:
+                    #gets the answer to the equations
+                    if type(EqsToSolve[0]) == linetype:
+                        answer = linePlane(EqsToSolve[0],EqsToSolve[1])
+                    else:
+                        answer = linePlane(EqsToSolve[1],EqsToSolve[0])
+                    #Determine what type of answer it is
+                    if type(answer) == str:
+                        AnswerDiagram = 'LineParrallelToPlane'
+                        Answerwin.changeLable(answer)
+                    elif type(answer) == list:
+                        AnswerDiagram = 'LineLiesOnThePlane'
+                        Answerwin.changeLable('The Line '+answer[0].equation('Vector')+ ' Lies on the Plane: '+answer[1].equation())
+                    elif type(answer) == pointype:
+                        AnswerDiagram = 'LineIntersectionWithAPlane'
+                        Answerwin.changeLable('The Line Interscet The Plane at the Point: '+ answer.__str__())
+
+
+                elif numofPlanes == 2:
+                    #gets the answer to the equations
+                    answer = twoPlanes(EqsToSolve[0],EqsToSolve[1])
+                    #Determine what type of answer it is
+                    if type(answer) == str:
+                        AnswerDiagram = '2PlanesAreParrallel'
+                        Answerwin.changeLable(answer)
+                    elif type(answer) == planetype:
+                        AnswerDiagram = '2PlanesAreCoincident'
+                        Answerwin.changeLable('Both Planes Are the Same Plane: '+answer.equation())
+                    elif type(answer) == linetype:
+                        AnswerDiagram = '2PlanesIntersectAtALine'
+                        Answerwin.changeLable('The Planes Interscet at a Line: '+ answer.equation('Vector'))
+
+
 
 
             if r3button.clicked(clickPos):
