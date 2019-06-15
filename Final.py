@@ -310,12 +310,16 @@ class vectordiagram():
 
 
     #Types of Outcomes
+    #lines in R2
+    # 'LiesInterscetAtAPointR2'
+    # 'LinesAreCoincidentR2'
+    # 'LinesAreParallelR2'
     #lines in R3
     # 'LiesInterscetAtAPointR3'
     # 'LinesAreCoincidentR3'
     # 'LinesAreParallelR3'
     # 'LinesAreSkewedR3'
-    # 'Lines And Planes'
+    #Lines And Planes in R3
     # 'LineIntersectionWithAPlane'
     # 'LineLiesOnThePlane'
     # 'LineParrallelToPlane'
