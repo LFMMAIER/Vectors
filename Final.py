@@ -23,16 +23,19 @@ class Vector():
                 self.y = self.y//top
                 self.z = self.z//top
             top -= 1
-        return (self.x,self.y,self.z)
+        if self.x < 0:
+            return (-1*self.x,-1*self.y,-1*self.z)
+        else:
+            return (self.x,self.y,self.z)
 
 #Simple point class for management
 class Point():
 
     def __init__(self,x,y,z):
-        self.point = (x,y,z)
-        self.x = x
-        self.y = y
-        self.z = z
+        self.x = round(x,2)
+        self.y = round(y,2)
+        self.z = round(z,2)
+        self.point = (self.x,self.y,self.z)
 
     def __str__(self):
         return str(self.point)
@@ -69,39 +72,42 @@ def twoPlanes(plane1,plane2):
 
         if plane1.x != 0 and plane2.x != 0:
             plane3 = Plane(plane1.x*plane2.x - plane2.x*plane1.x, plane1.y*plane2.x - plane2.y*plane1.x, plane1.z*plane2.x - plane2.z*plane1.x, plane1.D*plane2.x - plane2.D*plane1.x)
+            print (plane3.equation())
             pz = 0
             if plane3.y != 0:
-                py = plane3.D/plane3.y
-                px1 = ((plane1.D - plane1.y*py)/plane1.x)
-                px2 = ((plane2.D - plane2.y*py)/plane2.x)
+                py = round(plane3.D/plane3.y,2)
+                px1 = round(((plane1.D - plane1.y*py)/plane1.x),2)
+                px2 = round(((plane2.D - plane2.y*py)/plane2.x),2)
+                print (py,px1,px2)
                 if px1 == px2:
                     return (Line((px1,py,pz), (dirVec.x,dirVec.y,dirVec.z), '3d'), '2PlanesIntersectAtALine')
-                else:
-                    raise Exception('Something in the intersection of two planes broke...')
+                #else:
+                    #raise Exception('Something in the intersection of two planes broke...')
 
         if plane1.y != 0 and plane2.y != 0:
             plane3 = Plane(plane1.x*plane2.y - plane2.x*plane1.y, plane1.y*plane2.y - plane2.y*plane1.y, plane1.z*plane2.y - plane2.z*plane1.y, plane1.D*plane2.y - plane2.D*plane1.y)
             pz = 0
             if plane3.x != 0:
-                px = plane3.D/plane3.x
-                py1 = ((plane1.D - plane1.x*px)/plane1.y)
-                py2 = ((plane2.D - plane2.x*px)/plane2.y)
+                px = round(plane3.D/plane3.x,2)
+                py1 = round(((plane1.D - plane1.x*px)/plane1.y),2)
+                py2 = round(((plane2.D - plane2.x*px)/plane2.y),2)
                 if py1 == py2:
                     return (Line((px,py1,pz), (dirVec.x,dirVec.y,dirVec.z), '3d'), '2PlanesIntersectAtALine')
-                else:
-                    raise Exception('Something in the intersection of two planes broke...')
+                #else:
+                    #raise Exception('Something in the intersection of two planes broke...')
 
         if plane1.z != 0 and plane2.z != 0:
             plane3 = Plane(plane1.x*plane2.z - plane2.x*plane1.z, plane1.y*plane2.z - plane2.y*plane1.z, plane1.z*plane2.z - plane2.z*plane1.z, plane1.D*plane2.z - plane2.D*plane1.z)
             py = 0
             if plane3.x != 0:
-                px = plane3.D/plane3.x
-                pz1 = ((plane1.D - plane1.x*px)/plane1.z)
-                pz2 = ((plane2.D - plane2.x*px)/plane2.z)
+                px = round(plane3.D/plane3.x,2)
+                pz1 = round(((plane1.D - plane1.x*px)/plane1.z),2)
+                pz2 = round(((plane2.D - plane2.x*px)/plane2.z),2)
                 if pz1 == pz2:
                     return (Line((px,py,pz1), (dirVec.x,dirVec.y,dirVec.z), '3d'), '2PlanesIntersectAtALine')
-                else:
-                    raise Exception('Something in the intersection of two planes broke...')
+                #else:
+        raise Exception('Something in the intersection of two planes broke...')
+
 
 #3 Planes
 
@@ -136,7 +142,7 @@ def threePlanes(plane1,plane2,plane3):
         ans = linePlane(twoPlanes(plane2,plane3)[0],plane1)[0]
     elif type(twoPlanes(plane1,plane3)[0]) == Line:
         ans = linePlane(twoPlanes(plane1,plane3)[0],plane2)[0]
-
+    print (ans)
     #If the 3 planes intersect at a line
     if type(ans) == Line:
         return (ans, '3PlanesIntersectAtALine')
@@ -433,5 +439,4 @@ class vectordiagram():
 #pi3 = Plane(0,2,1,-2)
 
 #print(threePlanes(pi1,pi2,pi3))
-
-#print(twoPlanes(Plane(1,2,0,5),Plane(2,4,0,10)))
+print(twoPlanes(Plane(6,1,0,6),Plane(1,2,5,7)))
