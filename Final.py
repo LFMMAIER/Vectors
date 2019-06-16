@@ -55,7 +55,7 @@ def dot(vec1,vec2):
 
 def tripleScalar(vec1,vec2,vec3):
     return dot(vec1,cross(vec2,vec3))
-    
+
 #2 Planes
 
 def twoPlanes(plane1,plane2):
@@ -102,16 +102,16 @@ def twoPlanes(plane1,plane2):
                     return (Line((px,py,pz1), (dirVec.x,dirVec.y,dirVec.z), '3d'), '2PlanesIntersectAtALine')
                 else:
                     raise Exception('Something in the intersection of two planes broke...')
-                 
+
 #3 Planes
 
 def threePlanes(plane1,plane2,plane3):
     ans = None
-    
+
     #If the planes are coincident
     if plane1.equation() == plane2.equation() and plane1.equation() == plane3.equation():
         return (plane1, '3PlanesCoincident')
-    
+
     #If two planes are coicident and possibly intersect a third
     if type(twoPlanes(plane1,plane2)[0]) == Plane:
         ans = twoPlanes(twoPlanes(plane1,plane2)[0],plane3)[0]
@@ -119,7 +119,7 @@ def threePlanes(plane1,plane2,plane3):
         ans = twoPlanes(twoPlanes(plane3,plane2)[0],plane1)[0]
     elif type(twoPlanes(plane1,plane3)[0]) == Plane:
         ans = twoPlanes(twoPlanes(plane1,plane3)[0],plane2)[0]
-        
+
     if type(ans) == str:
         return ('DNE', '2PlanesCoincidentAnd1Parallel')
     elif type(ans) == Line:
@@ -151,7 +151,7 @@ def threePlanes(plane1,plane2,plane3):
         #If two planes are parrallel and intersect the third
         else:
             return ('DNE', '2PlanesThatAreParallelAndIntersectAThirdPlane')
-        
+
 # Plane and a line
 
 def linePlane(line1,plane1):
@@ -169,7 +169,7 @@ def linePlane(line1,plane1):
 
 # If a point is on a plane
 def isPointPlane(point1,plane1):
-    if plane1.normal.x * point1.x + plane1.normal.y * point1.y + plane1.normal.z * point1.z == plane1.D: 
+    if plane1.normal.x * point1.x + plane1.normal.y * point1.y + plane1.normal.z * point1.z == plane1.D:
         return True
     else:
         return False
@@ -191,14 +191,14 @@ def twoDline(line1,line2):
     ls = line1.dirVector.y - (line1.dirVector.x/line2.dirVector.x)*line2.dirVector.y
     rs = ((line1.point.x - line2.point.x)/line2.dirVector.x) * line2.dirVector.y + line2.point.y - line1.point.y
     s = rs/ls
-    return (Point(line1.point.x + s*line1.dirVector.x, line1.point.y + s*line1.dirVector.y,0),'LiesInterscetAtAPointR2')
+    return (Point(line1.point.x + s*line1.dirVector.x, line1.point.y + s*line1.dirVector.y,0),'LinesInterscetAtAPointR2')
 
 # 3d lines intersection
 
 def threeDline(line1,line2):
     s = None
     d = None
-    
+
     #If two lines have the same direction vector
     if line1.dirVector.vec == line2.dirVector.vec:
         s = (line1.point.x-line2.point.x)/line1.dirVector.x
@@ -217,7 +217,7 @@ def threeDline(line1,line2):
     else:
         return ('DNE', 'LinesAreSkewedR3')
 
-       
+
 #Equation
 
 class Line():
@@ -287,7 +287,7 @@ class Line():
                 return str(self.point.x)+' + '+str(self.dirVector.x)+'t',str(self.point.y)+' + '+str(self.dirVector.y)+'t',str(self.point.z)+' + '+str(self.dirVector.z)+'t'
             elif typee == 'Sclar':
                 return 'does not Exist'
-            
+
 #class for specialty lines
 class straightLine():
     #xory is a variable it tell the class if it is a horazantial or vertical line
@@ -302,29 +302,63 @@ class straightLine():
             return 'x = '+str(self.value)
         if self.xory == 'y':
             return 'y = '+str(self.value)
-        
+
 class Plane():
-    
+
     #Define a plane using its cartisian equation
     def __init__(self,x,y,z,D):
 
-        self.x = x
-        self.y = y
-        self.z = z
-        self.D = D
+        self.x,self.y,self.z,self.D = Plane.Planereduce(x,y,z,D)
         self.normal = Vector(x,y,z)
 
     def __str__(self):
         return self.equation()
+    #Reduces The Plane coeffients
+    @staticmethod
+    def Planereduce(x,y,z,D):
+        top = max(abs(x),abs(y),abs(z),abs(D))
+        while top >= 1:
+            #print (top)
+            #print (self.x%top == 0 and self.y%top == 0 and self.z%top == 0)
+            if x%top == 0 and y%top == 0 and z%top == 0 and D%top == 0:
+                x = x//top
+                y = y//top
+                z = z//top
+                D = D//top
+            top -= 1
+        return (x,y,z,D)
 
-        
 ##        self.point = Point(point[0],point[1],point[2])
 ##        self.dirVector1 = Vector(dirVector1[0],dirVector1[1],dirVector1[2])
 ##        self.dirVector2 = Vector(dirVector2[0],dirVector2[1],dirVector2[2])
 ##        self.c = (point[0]*self.normal.x + point[1]*self.normal.y + point[2]*self.normal.z)
 
     def equation(self):
-        return str(self.x)+'x'+' + '+str(self.y)+'y + '+str(self.z)+'z = '+str(self.D)
+        #algorim to dispaly the equations properly wiht coffients of 1 as x,y,z and replaceing '+' with '-' when a coeffecnt is negitive
+        eqD = ' = '+str(self.D)
+        eqx = str(self.x)+'x'
+        eqy = ' + '+str(self.y)+'y'
+        eqz = ' + '+str(self.z)+'z'
+        if self.x == 1 or self.x == -1:
+            if self.normal.x < 0:
+                eqx = '-x'
+            else:
+                eqx = 'x'
+        if self.y < 0:
+            eqy = ' - '+str(abs(self.y))+'y'
+        if self.y == 1 or self.y == -1:
+            if self.y < 0:
+                eqy = ' - y'
+            else:
+                eqy = ' + y'
+        if self.z < 0:
+            eqz = ' - '+str(abs(self.z))+'z'
+        if self.z == 1 or self.z == -1:
+            if self.z < 0:
+                eqz = ' - z'
+            else:
+                eqz = ' + z'
+        return eqx+eqy+eqz+eqD
 
 #creates a picture box class that displays differnd types of interctions With static Atributes
 
@@ -340,11 +374,11 @@ class vectordiagram():
 
     #Types of Outcomes
     #lines in R2
-    # 'LiesInterscetAtAPointR2'
+    # 'LinesInterscetAtAPointR2'
     # 'LinesAreCoincidentR2'
     # 'LinesAreParallelR2'
     #lines in R3
-    # 'LiesInterscetAtAPointR3'
+    # 'LinesInterscetAtAPointR3'
     # 'LinesAreCoincidentR3'
     # 'LinesAreParallelR3'
     # 'LinesAreSkewedR3'
@@ -400,4 +434,4 @@ class vectordiagram():
 
 #print(threePlanes(pi1,pi2,pi3))
 
-#print(twoPlanes(pi1,pi2))
+#print(twoPlanes(Plane(1,2,0,5),Plane(2,4,0,10)))
