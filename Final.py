@@ -53,7 +53,7 @@ def dot(vec1,vec2):
 
 #Triple Scalar
 
-def tripleScalar(vec1,vec2,vce3):
+def tripleScalar(vec1,vec2,vec3):
     return dot(vec1,cross(vec2,vec3))
     
 #2 Planes
@@ -61,54 +61,21 @@ def tripleScalar(vec1,vec2,vce3):
 def twoPlanes(plane1,plane2):
     if plane1.normal.vec == plane2.normal.vec:
         if plane1.equation() == plane2.equation():
-            return plane1
+            return (plane1 , '2PlanesAreCoincident')
         else:
-            return 'DNE'
+            return ('DNE' , '2PlanesAreParrallel')
     else:
-##        if plane1.x != 0 and plane2.x != 0:
-##            plane3 = Plane(plane1.x*plane2.x - plane2.x*plane1.x, plane1.y*plane2.x - plane2.y*plane1.x, plane1.z*plane2.x - plane2.z*plane1.x, plane1.D*plane2.x - plane2.D*plane1.x)
-##            dirz = 1
-##            pz = 0
-##            diry = -plane3.z/plane3.y
-##            py = plane3.D/plane3.y
-##            dirx = (-dirz*plane1.z -diry*plane1.y)/plane1.x
-##            px = (plane1.D - pz*plane1.z - py*plane1.y)/plane1.x
-##        return Line((px,py,pz),(dirx*plane3.y*plane1.x,diry*plane3.y*plane1.x,dirz*plane3.y*plane1.x),'3d')
-
-    #Solution cross the two normal vectors. Then all I need to figure out is a point.
-
         dirVec = cross(plane1.normal,plane2.normal)
-        #print (plane1.normal)
-        #print (plane2.normal)
-        #print (dirVec)
-
-##        if plane1.y != 0 and plane2.y != 0:
-##            px = 0
-##            pz = (plane2.D - plane2.y*(plane1.D/plane1.y))/(plane2.y*(-plane1.z/plane1.y) + plane2.z)
-##            py = (plane1.D - pz)/plane1.y
-##        if plane1.z != 0 and plane2.z != 0:
-##            px = 0
-##            print(plane2.D - plane2.z*(plane1.D/plane1.z))
-##            pz = (plane2.D - plane2.z*(plane1.D/plane1.z))/(plane2.z*(-plane1.y/plane1.z) + plane2.y)
-##            py = (plane1.D - pz)/plane1.z
-##        if plane1.x != 0 and plane2.x != 0:
-##            pz = 0
-##            py = (plane2.D - plane2.x*(plane1.D/plane1.x))/(plane2.x*(-plane1.y/plane1.x) + plane2.x)
-##            px = (plane1.D - py)/plane1.x
-##        else:
-##            raise Exception('Hey, so something in the finding the line of intersection of two planes messed up')
 
         if plane1.x != 0 and plane2.x != 0:
             plane3 = Plane(plane1.x*plane2.x - plane2.x*plane1.x, plane1.y*plane2.x - plane2.y*plane1.x, plane1.z*plane2.x - plane2.z*plane1.x, plane1.D*plane2.x - plane2.D*plane1.x)
-            #print(plane3)
             pz = 0
             if plane3.y != 0:
                 py = plane3.D/plane3.y
                 px1 = ((plane1.D - plane1.y*py)/plane1.x)
                 px2 = ((plane2.D - plane2.y*py)/plane2.x)
                 if px1 == px2:
-                    #print('hi')
-                    return Line((px1,py,pz), (dirVec.x,dirVec.y,dirVec.z), '3d')
+                    return (Line((px1,py,pz), (dirVec.x,dirVec.y,dirVec.z), '3d'), '2PlanesIntersectAtALine')
                 else:
                     raise Exception('Something in the intersection of two planes broke...')
 
@@ -119,26 +86,20 @@ def twoPlanes(plane1,plane2):
                 px = plane3.D/plane3.x
                 py1 = ((plane1.D - plane1.x*px)/plane1.y)
                 py2 = ((plane2.D - plane2.x*px)/plane2.y)
-                #print(py1,py2)
                 if py1 == py2:
-                    #print('hi')
-                    return Line((px,py1,pz), (dirVec.x,dirVec.y,dirVec.z), '3d')
+                    return (Line((px,py1,pz), (dirVec.x,dirVec.y,dirVec.z), '3d'), '2PlanesIntersectAtALine')
                 else:
                     raise Exception('Something in the intersection of two planes broke...')
 
         if plane1.z != 0 and plane2.z != 0:
             plane3 = Plane(plane1.x*plane2.z - plane2.x*plane1.z, plane1.y*plane2.z - plane2.y*plane1.z, plane1.z*plane2.z - plane2.z*plane1.z, plane1.D*plane2.z - plane2.D*plane1.z)
-            #print(3)
             py = 0
             if plane3.x != 0:
                 px = plane3.D/plane3.x
                 pz1 = ((plane1.D - plane1.x*px)/plane1.z)
                 pz2 = ((plane2.D - plane2.x*px)/plane2.z)
-                #print(pz1,pz2)
-                #print(math.isclose(pz1,pz2))
                 if pz1 == pz2:
-                    #print('hi')
-                    return Line((px,py,pz1), (dirVec.x,dirVec.y,dirVec.z), '3d')
+                    return (Line((px,py,pz1), (dirVec.x,dirVec.y,dirVec.z), '3d'), '2PlanesIntersectAtALine')
                 else:
                     raise Exception('Something in the intersection of two planes broke...')
                  
@@ -148,37 +109,62 @@ def threePlanes(plane1,plane2,plane3):
     ans = None
     
     #If the planes are coincident
-    if plane1.equation() == plane2.equation() and plane1.equation == plane3.equation:
-        return plane1
+    if plane1.equation() == plane2.equation() and plane1.equation() == plane3.equation():
+        return (plane1, '3PlanesCoincident')
     
     #If two planes are coicident and possibly intersect a third
-    if type(twoPlanes(plane1,plane2)) == Plane or type(twoPlanes(plane3,plane2)) == Plane or type(twoPlanes(plane1,plane3)) == Plane:
-        return twoPlanes(twoPlanes(plane1,plane2),plane3)
-
-    #If twoPlanes intersect at a line
-    if type(twoPlanes(plane1,plane2)) == Line:
-        ans = linePlane(twoPlanes(plane1,plane2),plane3)
-    elif type(twoPlanes(plane2,plane3)) == Line:
-        ans = linePlane(twoPlanes(plane2,plane3),plane1)
-    elif type(twoPlanes(plane1,plane3)) == Line:
-        ans = linePlane(twoPlanes(plane1,plane3),plane2)
-
+    if type(twoPlanes(plane1,plane2)[0]) == Plane:
+        ans = twoPlanes(twoPlanes(plane1,plane2)[0],plane3)[0]
+    elif type(twoPlanes(plane3,plane2)[0]) == Plane:
+        ans = twoPlanes(twoPlanes(plane3,plane2)[0],plane1)[0]
+    elif type(twoPlanes(plane1,plane3)[0]) == Plane:
+        ans = twoPlanes(twoPlanes(plane1,plane3)[0],plane2)[0]
+        
     if type(ans) == str:
-        return (ans,
+        return ('DNE', '2PlanesCoincidentAnd1Parallel')
+    elif type(ans) == Line:
+        return (ans, '2PlanesAreCoincidentAndIntersectAThirdPlane')
+
+    #If the 3 planes are parrallel
+    if plane1.normal.vec == plane2.normal.vec and plane1.normal.vec == plane3.normal.vec:
+        return ('DNE', '3PlanesParallel')
+
+    #If two Planes intersect at a line
+    if type(twoPlanes(plane1,plane2)[0]) == Line:
+        ans = linePlane(twoPlanes(plane1,plane2)[0],plane3)[0]
+    elif type(twoPlanes(plane2,plane3)[0]) == Line:
+        ans = linePlane(twoPlanes(plane2,plane3)[0],plane1)[0]
+    elif type(twoPlanes(plane1,plane3)[0]) == Line:
+        ans = linePlane(twoPlanes(plane1,plane3)[0],plane2)[0]
+
+    #If the 3 planes intersect at a line
+    if type(ans) == Line:
+        return (ans, '3PlanesIntersectAtALine')
+    #If the 3 planes intersect at a point
+    elif type(ans) == Point:
+        return (ans, '3PlanesIntersectAtAPoint')
+    #If the 2 planes are parlle and intersect the third
+    else:
+        #If the 3 planes form a triangular prism
+        if tripleScalar(plane1.normal,plane2.normal,plane3.normal) == 0:
+            return ('DNE', '3PlanesIntersectandMakeAPrisim')
+        #If two planes are parrallel and intersect the third
+        else:
+            return ('DNE', '2PlanesThatAreParallelAndIntersectAThirdPlane')
         
 # Plane and a line
 
 def linePlane(line1,plane1):
     if dot(line1.dirVector, plane1.normal) == 0:
         if isPointPlane(line1.point,plane1):
-            return line1
+            return (line1, 'LineLiesOnThePlane')
         else:
-            return 'DNE'
+            return ('DNE', 'LineParrallelToPlane')
     else:
-        ls = plane1.normal.x* line1.point.x + plane1.normal.y* line1.point.y + plane1.normal.z* line1.point.z
-        rs = plane1.normal.x* line1.dirVector.x + plane1.normal.y* line1.dirVector.y + plane1.normal.z* line1.dirVector.z + plane1.D
-        s = rs/-ls
-        return Point(line1.point.x + s*line1.dirVector.x,line1.point.y + s*line1.dirVector.y,line1.point.z + s*line1.dirVector.z)
+        ls = -(plane1.x* line1.point.x + plane1.y* line1.point.y + plane1.z* line1.point.z) + plane1.D
+        rs = plane1.x* line1.dirVector.x + plane1.y* line1.dirVector.y + plane1.z* line1.dirVector.z
+        s = ls/rs
+        return (Point(line1.point.x + s*line1.dirVector.x,line1.point.y + s*line1.dirVector.y,line1.point.z + s*line1.dirVector.z), 'LineIntersectionWithAPlane')
 
 
 # If a point is on a plane
@@ -357,7 +343,10 @@ l = Line((3,1,2),(1,-4,-8),'3d')
 #print(linePlane(l,pi))
 
 
-pi1 = Plane(2,-1,3,-2)
-pi2 = Plane(1,0,-3,1)
+pi1 = Plane(1,2,3,1)
+pi2 = Plane(1,5,-2,-1)
+pi3 = Plane(0,2,1,-2)
 
-print(twoPlanes(pi1,pi2))
+print(threePlanes(pi1,pi2,pi3))
+
+#print(twoPlanes(pi1,pi2))
