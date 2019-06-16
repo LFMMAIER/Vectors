@@ -174,6 +174,24 @@ def isPointPlane(point1,plane1):
     else:
         return False
 
+# 2d lines intersection
+
+def twoDline(line1,line2):
+    s = None
+
+    #If two lines have the same direction vector
+    if line1.dirVector.vec == line2.dirVector.vec:
+        s = (line1.point.x-line2.point.x)/line1.dirVector.x
+        if line2.point.y + s == line1.point.y:
+            return (line1, 'LinesAreCoincidentR2')
+        else:
+            return ('DNE', 'LinesAreParallelR2')
+    ls = line1.dirVector.y - (line1.dirVector.x/line2.dirVector.x)*line2.dirVector.y
+    rs = ((line1.point.x - line2.point.x)/line2.dirVector.x) * line2.dirVector.y + line2.point.y - line1.point.y
+    s = rs/ls
+    return (Point(line1.point.x + s*line1.dirVector.x, line1.point.y + s*line1.dirVector.y,0),'LiesInterscetAtAPointR2')
+
+#
     
 #Equation
 
@@ -334,19 +352,27 @@ class vectordiagram():
             offset = ((self.rect[2]-diagram.get_width())/2,(self.rect[3]-diagram.get_height())/2)
             surface.blit(diagram, (self.rect[0]+offset[0], self.rect[1]+offset[1]))
 
-p = Point(1,2,3)
-pi = Plane(4,2,-1,8)
-l = Line((3,1,2),(1,-4,-8),'3d')
+
+
+p = Line((1,2),(1,1),'2d')
+k = Line((-1,-1),(-1,2),'2d')
+
+print(twoDline(p,k)[0].point)
+
+
+#p = Point(1,2,3)
+#pi = Plane(4,2,-1,8)
+#l = Line((3,1,2),(1,-4,-8),'3d')
 
 #print(pi.equation())
 #print(isPointPlane(p,pi))
 #print(linePlane(l,pi))
 
 
-pi1 = Plane(1,2,3,1)
-pi2 = Plane(1,5,-2,-1)
-pi3 = Plane(0,2,1,-2)
+#pi1 = Plane(1,2,3,1)
+#pi2 = Plane(1,5,-2,-1)
+#pi3 = Plane(0,2,1,-2)
 
-print(threePlanes(pi1,pi2,pi3))
+#print(threePlanes(pi1,pi2,pi3))
 
 #print(twoPlanes(pi1,pi2))
