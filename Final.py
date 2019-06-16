@@ -186,13 +186,38 @@ def twoDline(line1,line2):
             return (line1, 'LinesAreCoincidentR2')
         else:
             return ('DNE', 'LinesAreParallelR2')
+
+    #Which point they intersect at
     ls = line1.dirVector.y - (line1.dirVector.x/line2.dirVector.x)*line2.dirVector.y
     rs = ((line1.point.x - line2.point.x)/line2.dirVector.x) * line2.dirVector.y + line2.point.y - line1.point.y
     s = rs/ls
     return (Point(line1.point.x + s*line1.dirVector.x, line1.point.y + s*line1.dirVector.y,0),'LiesInterscetAtAPointR2')
 
-#
+# 3d lines intersection
+
+def threeDline(line1,line2):
+    s = None
+    d = None
     
+    #If two lines have the same direction vector
+    if line1.dirVector.vec == line2.dirVector.vec:
+        s = (line1.point.x-line2.point.x)/line1.dirVector.x
+        if line2.point.y + s == line1.point.y:
+            return (line1, 'LinesAreCoincidentR3')
+        else:
+            return ('DNE', 'LinesAreParallelR3')
+
+    #Which point they intersect at or if they are skew
+    ls = line1.dirVector.y - (line1.dirVector.x/line2.dirVector.x)*line2.dirVector.y
+    rs = ((line1.point.x - line2.point.x)/line2.dirVector.x) * line2.dirVector.y + line2.point.y - line1.point.y
+    s = rs/ls
+    d = (line1.dirVector.x*s + line1.point.x - line2.point.x)/line2.dirVector.x
+    if math.isclose(line1.point.z + s*line1.dirVector.z, line2.point.z + d*line2.dirVector.z):
+        return (Point(line1.point.x + s*line1.dirVector.x, line1.point.y + s*line1.dirVector.y, line1.point.z + s*line1.dirVector.z), 'LiesInterscetAtAPointR3')
+    else:
+        return ('DNE', 'LinesAreSkewedR3')
+
+       
 #Equation
 
 class Line():
@@ -354,10 +379,10 @@ class vectordiagram():
 
 
 
-p = Line((1,2),(1,1),'2d')
-k = Line((-1,-1),(-1,2),'2d')
+#p = Line((-3,1,4),(-1,1,4),'3d')
+#k = Line((1,4,6),(-6,-1,6),'3d')
 
-print(twoDline(p,k)[0].point)
+#print(threeDline(p,k))
 
 
 #p = Point(1,2,3)
