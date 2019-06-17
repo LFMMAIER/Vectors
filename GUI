@@ -60,8 +60,10 @@ def redraw_win():
     solve.draw(win)
     saveEq.draw(win)
     recover.draw(win)
+    deletesaved.draw(win)
     cartianbutton.draw(win)
     vectorbutton.draw(win)
+    ClearAns.draw(win)
 
     diagram.display(win,AnswerDiagram)
 
@@ -88,8 +90,8 @@ def readEQfile(file):
 SavedEquationsfile = open("SavedEquationsfile.txt")
 SavedAnswersfile = open('SavedAnswersfile.txt','w')
 savedEquationslist = readEQfile(SavedEquationsfile)
-
-win = pygame.display.set_mode((1650,800))
+size = (1650,800)
+win = pygame.display.set_mode(size)
 
 #Titles
 title = Lable((100,50,250,70),'LINE',True,fsize=50)
@@ -122,8 +124,8 @@ AnswerDiagram = None
 #Lables Line
 DirctionVectorLableline = Lable((100,180,250,25),'Direction Vector',fsize=24)
 PointLableline = Lable((100,125,250,25),'Point',fsize=24)
-HorazantialLine = Lable((100,290,250,25),'Horazantial Line',fsize=24)
-VerticalLines = Lable((100,390,250,25),'Vertical Line',fsize=24)
+HorazantialLine = Lable((100,290,250,25),'Horazantial Line in R2',fsize=24)
+VerticalLines = Lable((100,390,250,25),'Vertical Line in R2',fsize=24)
 
 #Plane txtbox Lables
 PointLablePlane = Lable((400,125,250,25),'Point',fsize=24)
@@ -150,8 +152,10 @@ cartianbutton = Button((405,300,100,25),(0,0,0),'Cartesian',fsize=24,fill=button
 vectorbutton = Button((510,300,75,25),(0,0,0),'Vector',fsize=24)
 solve = Button((700,540,250,25),(0,0,0),'Solve Selected',fsize=24)
 delete = Button((700,570,250,25),(0,0,0),'Delete Selected',fsize=24)
-saveEq = Button((700,600,250,25),(0,0,0),'Save Equations',fsize=24)
-recover = Button((700,630,250,25),(0,0,0),'Recover Equations',fsize=24)
+saveEq = Button((700,610,250,25),(0,0,0),'Save Equations',fsize=24)
+ClearAns = Button((1325,720,250,25),(0,0,0),'Clear Answer',fsize=24)
+recover = Button((700,640,250,25),(0,0,0),'Recover Equations',fsize=24)
+deletesaved = Button((700,670,250,25),(0,0,0),'Delete Saved Equations',fsize=24)
 
 On = True
 while On:
@@ -194,42 +198,111 @@ while On:
                     SavedEquationsfile = open("SavedEquationsfile.txt")
                     savedEquationslist = readEQfile(SavedEquationsfile)
 
+            if deletesaved.clicked(clickPos):
+                SavedEquationsfile = open("SavedEquationsfile.txt",'w')
+                SavedEquationsfile.writelines('')
+                SavedEquationsfile = open("SavedEquationsfile.txt")
+                savedEquationslist = readEQfile(SavedEquationsfile)
+
+
             #Code for determining what to use to solve the equations
             if solve.clicked(clickPos):
                 EqsToSolve = EquationsSelect.reurnSelected()
                 numoflines = sum([1 for n in EqsToSolve if type(n) == linetype])
                 numofPlanes = sum([1 for n in EqsToSolve if type(n) == planetype])
-                if numoflines == 1 and numofPlanes == 1:
+                #print (EqsToSolve[0].equation(),EqsToSolve[0].equation())
+                if numoflines == 2:
+                    if EqsToSolve[0].space == '2d':
+                        #gets the answer to the equations
+                        answer = twoDline(EqsToSolve[0],EqsToSolve[1])
+                        if answer[1] == 'LinesAreParallelR2':
+                            AnswerDiagram = answer[1]
+                            Answerwin.changeLable(answer[0])
+                        elif answer[1] == 'LinesAreCoincidentR2':
+                            AnswerDiagram = answer[1]
+                            Answerwin.changeLable('The Two Lines are the Same Line: '+ answer[0].equation('Vector'))
+                        elif answer[1] == 'LinesInterscetAtAPointR2':
+                            AnswerDiagram = answer[1]
+
+                            Answerwin.changeLable('The Lines intersect at Point: '+ answer[0].__str__()[:-4]+')')
+                    else:
+                        #gets the answer to the equations
+                        answer = threeDline(EqsToSolve[0],EqsToSolve[1])
+                        #Determine what type of answer it is
+                        if answer[1] == 'LinesAreParallelR3':
+                            AnswerDiagram = answer[1]
+                            Answerwin.changeLable(answer[0])
+                        elif answer[1] == 'LinesAreCoincidentR3':
+                            AnswerDiagram = answer[1]
+                            Answerwin.changeLable('The Two Lines are the Same Line: '+ answer[0].equation('Vector'))
+                        elif answer[1] == 'LinesInterscetAtAPointR3':
+                            AnswerDiagram = answer[1]
+                            Answerwin.changeLable('The Lines intersect at Point: '+ answer[0].__str__())
+
+                elif numoflines == 1 and numofPlanes == 1:
                     #gets the answer to the equations
                     if type(EqsToSolve[0]) == linetype:
                         answer = linePlane(EqsToSolve[0],EqsToSolve[1])
                     else:
                         answer = linePlane(EqsToSolve[1],EqsToSolve[0])
                     #Determine what type of answer it is
-                    if type(answer) == str:
-                        AnswerDiagram = 'LineParrallelToPlane'
-                        Answerwin.changeLable(answer)
-                    elif type(answer) == list:
-                        AnswerDiagram = 'LineLiesOnThePlane'
+                    if answer[1] == 'LineParrallelToPlane':
+                        AnswerDiagram = answer[1]
+                        Answerwin.changeLable(answer[0])
+                    elif answer[1] == 'LineLiesOnThePlane':
+                        AnswerDiagram = answer[1]
                         Answerwin.changeLable('The Line '+answer[0].equation('Vector')+ ' Lies on the Plane: '+answer[1].equation())
-                    elif type(answer) == pointype:
-                        AnswerDiagram = 'LineIntersectionWithAPlane'
-                        Answerwin.changeLable('The Line Interscet The Plane at the Point: '+ answer.__str__())
-
+                    elif answer[1] == 'LineIntersectionWithAPlane':
+                        AnswerDiagram = answer[1]
+                        Answerwin.changeLable('The Line Interscet The Plane at the Point: '+ answer[0].__str__())
 
                 elif numofPlanes == 2:
                     #gets the answer to the equations
                     answer = twoPlanes(EqsToSolve[0],EqsToSolve[1])
                     #Determine what type of answer it is
-                    if type(answer) == str:
-                        AnswerDiagram = '2PlanesAreParrallel'
-                        Answerwin.changeLable(answer)
-                    elif type(answer) == planetype:
-                        AnswerDiagram = '2PlanesAreCoincident'
-                        Answerwin.changeLable('Both Planes Are the Same Plane: '+answer.equation())
-                    elif type(answer) == linetype:
-                        AnswerDiagram = '2PlanesIntersectAtALine'
-                        Answerwin.changeLable('The Planes Interscet at a Line: '+ answer.equation('Vector'))
+                    if answer[1] == '2PlanesAreParrallel':
+                        AnswerDiagram = answer[1]
+                        Answerwin.changeLable(answer[0])
+                    elif answer[1] == '2PlanesAreCoincident':
+                        AnswerDiagram = answer[1]
+                        Answerwin.changeLable('Both Planes Are the Same Plane: '+ answer[0].equation())
+                    elif answer[1] == '2PlanesIntersectAtALine':
+                        AnswerDiagram = answer[1]
+                        print (answer[0].equation('Vector'))
+                        Answerwin.changeLable('The Planes Interscet at a Line: '+ answer[0].equation('Vector'))
+                elif numofPlanes == 3:
+                    #gets the answer to the equations
+                    answer = threePlanes(EqsToSolve[0],EqsToSolve[1],EqsToSolve[2])
+                    #Determine what type of answer it is
+                    if answer[1] == '3PlanesCoincident':
+                        AnswerDiagram = answer[1]
+                        Answerwin.changeLable('All three Planes are the Same Plane: '+ answer[0].equation())
+                    elif answer[1] == '2PlanesCoincidentAnd1Parallel':
+                        AnswerDiagram = answer[1]
+                        Answerwin.changeLable(answer[0])
+                    elif answer[1] == '2PlanesAreCoincidentAndIntersectAThirdPlane':
+                        AnswerDiagram = answer[1]
+                        Answerwin.changeLable('Two coincident planes interscet a third Plane at the line: '+answer[0].equation('Vector'))
+                    elif answer[1] == '3PlanesParallel':
+                        AnswerDiagram = answer[1]
+                        Answerwin.changeLable(answer[0])
+                    elif answer[1] == '3PlanesIntersectAtALine':
+                        AnswerDiagram = answer[1]
+                        Answerwin.changeLable('Three planes interscet at the line: '+ answer[0].equation('Vector'))
+                    elif answer[1] == '3PlanesIntersectAtAPoint':
+                        AnswerDiagram = answer[1]
+                        Answerwin.changeLable('Three planes interscet at the Point: '+ answer[0].__str__())
+                    elif answer[1] == '3PlanesIntersectandMakeAPrisim':
+                        AnswerDiagram = answer[1]
+                        Answerwin.changeLable(answer[0])
+                    elif answer[1] == '2PlanesThatAreParallelAndIntersectAThirdPlane':
+                        AnswerDiagram = answer[1]
+                        Answerwin.changeLable(answer[0])
+
+            #Clears current answer
+            if ClearAns.clicked(clickPos):
+                AnswerDiagram = None
+                Answerwin.changeLable('')
 
 
 
@@ -354,6 +427,8 @@ while On:
             solve.hover(mp,buttonOnfill,(0,0,0),3,1)
             saveEq.hover(mp,buttonOnfill,(0,0,0),3,1)
             recover.hover(mp,buttonOnfill,(0,0,0),3,1)
+            deletesaved.hover(mp,buttonOnfill,(0,0,0),3,1)
+            ClearAns.hover(mp,buttonOnfill,(0,0,0),3,1)
             addline.hover(mp,buttonOnfill,(0,0,0),3,1)
             addplane.hover(mp,buttonOnfill,(0,0,0),3,1)
             addHorazantialLine.hover(mp,buttonOnfill,(0,0,0),3,1)
