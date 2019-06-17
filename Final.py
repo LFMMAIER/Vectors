@@ -102,6 +102,7 @@ def twoPlanes(plane1,plane2):
                 
         raise Exception('Something in the intersection of two planes broke...')
 
+
 #3 Planes
 
 def threePlanes(plane1,plane2,plane3):
@@ -178,6 +179,35 @@ def isPointPlane(point1,plane1):
 def twoDline(line1,line2):
     s = None
 
+    #Two straightlines intesection
+    if type(line1) == straightLine and type(line2) == straightLine:
+        if line1.xory == 'x' and line2.xory == 'y':
+            return(Point(line1.value, line2.value, 0),'LinesInterscetAtAPointR2')
+        elif line1.xory == 'y' and line2.xory == 'x':
+            return(Point(line2.value, line1.value, 0),'LinesInterscetAtAPointR2')
+        else:
+            if line1.value == line2.value:
+                return (line1, 'LinesAreCoincidentR2')
+            else:
+                return ('DNE', 'LinesAreParallelR2')
+
+    #One straight line intersection with another line
+    if type(line1) == staightLine:
+        if line1.xory == 'x':
+            s = (line1.value - line2.point.x)/line2.dirVector.x
+            return(Point(line1.value, line2.point.y + s*line2.dirVector.y,0),'LinesInterscetAtAPointR2')
+        elif line1.xory == 'y':
+            s = (line1.value - line2.point.y)/line2.dirVector.y
+            return(Point(line2.point.x + s*line2.dirVector.x, line1.value,0),'LinesInterscetAtAPointR2')
+    elif type(line2) == straightLine:
+        if line2.xory == 'x':
+            s = (line2.value - line1.point.x)/line1.dirVector.x
+            return(Point(line2.value, line1.point.y + s*line1.dirVector.y,0),'LinesInterscetAtAPointR2')
+        elif line2.xory == 'y':
+            s = (line2.value - line1.point.y)/line1.dirVector.y
+            return(Point(line1.point.x + s*line1.dirVector.x, line2.value,0),'LinesInterscetAtAPointR2')
+    
+    
     #If two lines have the same direction vector
     if line1.dirVector.vec == line2.dirVector.vec:
         s = (line1.point.x-line2.point.x)/line1.dirVector.x
