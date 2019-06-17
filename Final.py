@@ -32,9 +32,9 @@ class Vector():
 class Point():
 
     def __init__(self,x,y,z):
-        self.x = round(x,2)
-        self.y = round(y,2)
-        self.z = round(z,2)
+        self.x = x
+        self.y = y
+        self.z = z
         self.point = (self.x,self.y,self.z)
 
     def __str__(self):
@@ -72,42 +72,35 @@ def twoPlanes(plane1,plane2):
 
         if plane1.x != 0 and plane2.x != 0:
             plane3 = Plane(plane1.x*plane2.x - plane2.x*plane1.x, plane1.y*plane2.x - plane2.y*plane1.x, plane1.z*plane2.x - plane2.z*plane1.x, plane1.D*plane2.x - plane2.D*plane1.x)
-            print (plane3.equation())
             pz = 0
             if plane3.y != 0:
-                py = round(plane3.D/plane3.y,2)
-                px1 = round(((plane1.D - plane1.y*py)/plane1.x),2)
-                px2 = round(((plane2.D - plane2.y*py)/plane2.x),2)
-                print (py,px1,px2)
-                if px1 == px2:
+                py = plane3.D/plane3.y
+                px1 = (plane1.D - plane1.y*py)/plane1.x
+                px2 = (plane2.D - plane2.y*py)/plane2.x
+                if math.isclose(px1,px2):
                     return (Line((px1,py,pz), (dirVec.x,dirVec.y,dirVec.z), '3d'), '2PlanesIntersectAtALine')
-                #else:
-                    #raise Exception('Something in the intersection of two planes broke...')
 
         if plane1.y != 0 and plane2.y != 0:
             plane3 = Plane(plane1.x*plane2.y - plane2.x*plane1.y, plane1.y*plane2.y - plane2.y*plane1.y, plane1.z*plane2.y - plane2.z*plane1.y, plane1.D*plane2.y - plane2.D*plane1.y)
             pz = 0
             if plane3.x != 0:
-                px = round(plane3.D/plane3.x,2)
-                py1 = round(((plane1.D - plane1.x*px)/plane1.y),2)
-                py2 = round(((plane2.D - plane2.x*px)/plane2.y),2)
-                if py1 == py2:
+                px = plane3.D/plane3.x
+                py1 = (plane1.D - plane1.x*px)/plane1.y
+                py2 = (plane2.D - plane2.x*px)/plane2.y
+                if math.isclose(py1,py2):
                     return (Line((px,py1,pz), (dirVec.x,dirVec.y,dirVec.z), '3d'), '2PlanesIntersectAtALine')
-                #else:
-                    #raise Exception('Something in the intersection of two planes broke...')
 
         if plane1.z != 0 and plane2.z != 0:
             plane3 = Plane(plane1.x*plane2.z - plane2.x*plane1.z, plane1.y*plane2.z - plane2.y*plane1.z, plane1.z*plane2.z - plane2.z*plane1.z, plane1.D*plane2.z - plane2.D*plane1.z)
             py = 0
             if plane3.x != 0:
-                px = round(plane3.D/plane3.x,2)
-                pz1 = round(((plane1.D - plane1.x*px)/plane1.z),2)
-                pz2 = round(((plane2.D - plane2.x*px)/plane2.z),2)
-                if pz1 == pz2:
+                px = plane3.D/plane3.x
+                pz1 = (plane1.D - plane1.x*px)/plane1.z
+                pz2 = (plane2.D - plane2.x*px)/plane2.z
+                if math.isclose(pz1,pz2):
                     return (Line((px,py,pz1), (dirVec.x,dirVec.y,dirVec.z), '3d'), '2PlanesIntersectAtALine')
-                #else:
+                
         raise Exception('Something in the intersection of two planes broke...')
-
 
 #3 Planes
 
@@ -142,7 +135,7 @@ def threePlanes(plane1,plane2,plane3):
         ans = linePlane(twoPlanes(plane2,plane3)[0],plane1)[0]
     elif type(twoPlanes(plane1,plane3)[0]) == Line:
         ans = linePlane(twoPlanes(plane1,plane3)[0],plane2)[0]
-    print (ans)
+
     #If the 3 planes intersect at a line
     if type(ans) == Line:
         return (ans, '3PlanesIntersectAtALine')
@@ -418,25 +411,8 @@ class vectordiagram():
             surface.blit(diagram, (self.rect[0]+offset[0], self.rect[1]+offset[1]))
 
 
+pi1 = Plane(3,-1,2,4)
+pi2 = Plane(3,-8,7,-1)
+pi3 = Plane(1,2,-1,3)
 
-#p = Line((-3,1,4),(-1,1,4),'3d')
-#k = Line((1,4,6),(-6,-1,6),'3d')
-
-#print(threeDline(p,k))
-
-
-#p = Point(1,2,3)
-#pi = Plane(4,2,-1,8)
-#l = Line((3,1,2),(1,-4,-8),'3d')
-
-#print(pi.equation())
-#print(isPointPlane(p,pi))
-#print(linePlane(l,pi))
-
-
-#pi1 = Plane(1,2,3,1)
-#pi2 = Plane(1,5,-2,-1)
-#pi3 = Plane(0,2,1,-2)
-
-#print(threePlanes(pi1,pi2,pi3))
-print(twoPlanes(Plane(6,1,0,6),Plane(1,2,5,7)))
+print(threePlanes(pi1,pi2,pi3)[0])
